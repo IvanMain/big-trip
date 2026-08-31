@@ -1,73 +1,97 @@
 import { capitalizedWord } from '../../util/word';
-import { EVENT_TYPES, CITIES, OFFER_TYPES, GALLERY_ITEMS } from '../../constants/constants';
-import { FormConfig } from '../../constants/enum';
+import { isEmptyObject } from '../../util/common';
+import { EVENT_TYPES, CITIES } from '../../constants/constants';
+import { FormConfig } from '../../configs/form-config';
+import DayBuilder from '../../util/day-builder';
 
-const createEventTypeItemTemplate = (type) => `
-  <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+const createEventTypeItemTemplate = (type, currentType) => {
+  const isChecked = type === currentType ? 'checked' : '';
 
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizedWord(type)}</label>
-  </div>
-`;
+  return `
+    <div class="event__type-item">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isChecked}>
 
-
-const createEventTypeTemplate = () => `
-  <div class="event__type-wrapper">
-    <label class="event__type  event__type-btn" for="event-type-toggle-1">
-      <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
-    </label>
-
-    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-    <div class="event__type-list">
-      <fieldset class="event__type-group">
-        <legend class="visually-hidden">Event type</legend>
-
-        ${EVENT_TYPES.map(createEventTypeItemTemplate).join('')}
-      </fieldset>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizedWord(type)}</label>
     </div>
-  </div>
-`;
+  `;
+};
+
+const createEventTypeTemplate = (point) => {
+  const { type: currentType } = point;
+
+  return `
+    <div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${currentType}.png" alt="Event ${currentType} icon">
+      </label>
+
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+
+      <div class="event__type-list">
+        <fieldset class="event__type-group">
+          <legend class="visually-hidden">Event type</legend>
+
+          ${EVENT_TYPES.map((eventType) => createEventTypeItemTemplate(eventType, currentType)).join('')}
+        </fieldset>
+      </div>
+    </div>
+  `;
+};
 
 const createDestinationListItemTemplate = (item) => `<option value="${item}"></option>`;
 
-const createDestinationFieldTemplate = () => `
-  <div class="event__field-group  event__field-group--destination">
-    <label class="event__label  event__type-output" for="event-destination-1">
-      Flight
-    </label>
+const createDestinationFieldTemplate = (point, destination) => {
+  const { type } = point;
+  const { name } = destination;
 
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+  return `
+    <div class="event__field-group  event__field-group--destination">
+      <label class="event__label  event__type-output" for="event-destination-1">
+        ${capitalizedWord(type)}
+      </label>
 
-    <datalist id="destination-list-1">
-      ${CITIES.map(createDestinationListItemTemplate).join('')}
-    </datalist>
-  </div>
-`;
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${capitalizedWord(name)}" list="destination-list-1">
 
-const createTimeFieldTemplate = () => `
-  <div class="event__field-group  event__field-group--time">
-    <label class="visually-hidden" for="event-start-time-1">From</label>
-    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
-    —
-    <label class="visually-hidden" for="event-end-time-1">To</label>
-    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
-  </div>
-`;
+      <datalist id="destination-list-1">
+        ${CITIES.map(createDestinationListItemTemplate).join('')}
+      </datalist>
+    </div>
+  `;
+};
 
-const createPriceFieldTemplate = () => `
-  <div class="event__field-group  event__field-group--price">
-    <label class="event__label" for="event-price-1">
-      <span class="visually-hidden">Price</span>
-      €
-    </label>
+const createTimeFieldTemplate = (point) => {
+  const { dateFrom, dateTo } = point;
 
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
-  </div>
-`;
+  return `
+    <div class="event__field-group  event__field-group--time">
+      <label class="visually-hidden" for="event-start-time-1">From</label>
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time"
+        value="${dateFrom ? DayBuilder.getCalendarFormat(dateFrom) : ''}">
+      —
+      <label class="visually-hidden" for="event-end-time-1">To</label>
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time"
+        value="${dateTo ? DayBuilder.getCalendarFormat(dateTo) : ''}">
+    </div>
+  `;
+};
 
-const createActionButtonsTemplate = ({ isRollupButton, submitTextButton, resetTextButton }) => `
+const createPriceFieldTemplate = (point) => {
+  const { basePrice } = point;
+
+  return `
+    <div class="event__field-group  event__field-group--price">
+      <label class="event__label" for="event-price-1">
+        <span class="visually-hidden">Price</span>
+        €
+      </label>
+
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+    </div>
+  `;
+};
+
+const createActionButtonsTemplate = (isRollupButton, submitTextButton, resetTextButton) => `
   <button class="event__save-btn  btn  btn--blue" type="submit">${submitTextButton}</button>
 
   <button class="event__reset-btn" type="reset">${resetTextButton}</button>
@@ -78,78 +102,102 @@ const createActionButtonsTemplate = ({ isRollupButton, submitTextButton, resetTe
     </button>` : ''}
 `;
 
-const createOfferItemTemplate = (offerType) => `
-  <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType.type}-1" type="checkbox" name="event-offer-${offerType.type}">
+const createOfferItemTemplate = (type, typeOffer, selectedOffers) => {
+  const { id, price, title } = typeOffer;
+  const isChecked = selectedOffers.some((selectedOffer) => selectedOffer.id === id) ? 'checked' : '';
 
-    <label class="event__offer-label" for="event-offer-${offerType.type}-1">
-      <span class="event__offer-title">${offerType.label}</span>
-      +€&nbsp;
-      <span class="event__offer-price">${offerType.cost}</span>
-    </label>
-  </div>
-`;
+  return `
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isChecked}>
 
-const createOffersTemplate = () => `
-  <section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-    <div class="event__available-offers">
-      ${OFFER_TYPES.map(createOfferItemTemplate).join('')}
+      <label class="event__offer-label" for="event-offer-${type}-${id}">
+        <span class="event__offer-title">${title}</span>
+        +€&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </label>
     </div>
-  </section>
-`;
+  `;
+};
 
-const createDestinationGalleryItemTemplate = (item) => `<img class="event__photo" src="${item.src}" alt="${item.alt}">`;
+const createOffersTemplate = (offers) => {
+  const { type, allTypeOffers = [], selectedOffers = [] } = offers;
 
-const createDestinationGalleryTemplate = () => `
+  return `
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${allTypeOffers.map((typeOffer) => createOfferItemTemplate(type, typeOffer, selectedOffers)).join('')}
+      </div>
+    </section>
+  `;
+};
+
+const createDestinationGalleryItemTemplate = (picture) => {
+  const { src, description } = picture;
+
+  return `<img class="event__photo" src="${src}" alt="${description}">`;
+};
+
+const createDestinationGalleryTemplate = (pictures) => `
   <div class="event__photos-container">
     <div class="event__photos-tape">
-      ${GALLERY_ITEMS.map(createDestinationGalleryItemTemplate).join('')}
+      ${pictures.map(createDestinationGalleryItemTemplate).join('')}
     </div>
   </div>
 `;
 
-const createDestinationSectionTemplate = ({ showGallery }) => `
-  <section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+const createDestinationSectionTemplate = (destination) => {
+  const { name, description, pictures = [] } = destination;
 
-    <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
+  return `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">${name}</h3>
 
-    ${showGallery ? createDestinationGalleryTemplate() : ''}
-  </section>
+      <p class="event__destination-description">${description}</p>
+
+      ${pictures.length ? createDestinationGalleryTemplate(pictures) : ''}
+    </section>
+  `;
+};
+
+const createFormHeader = (config, point, destination) => {
+  const {
+    isRollupButton = false,
+    submitTextButton = 'Save',
+    resetTextButton = 'Delete'
+  } = config;
+
+
+  return `
+    ${createEventTypeTemplate(point)}
+    ${createDestinationFieldTemplate(point, destination)}
+    ${createTimeFieldTemplate(point)}
+    ${createPriceFieldTemplate(point)}
+    ${createActionButtonsTemplate(isRollupButton, submitTextButton, resetTextButton)}
+  `;
+};
+
+const createFormDetails = (offers, destination) => `
+    ${!isEmptyObject(offers) ? createOffersTemplate(offers) : ''}
+    ${!isEmptyObject(destination) ? createDestinationSectionTemplate(destination) : ''}
 `;
 
-const createHeaderSection = ({
-  isRollupButton = false,
-  submitTextButton = 'Save',
-  resetTextButton = 'Delete'
+const createFormTemplate = ({
+  config = FormConfig.EDIT,
+  point = {},
+  offers = {},
+  destination = {}
 }) => `
-  ${createEventTypeTemplate()}
-  ${createDestinationFieldTemplate()}
-  ${createTimeFieldTemplate()}
-  ${createPriceFieldTemplate()}
-  ${createActionButtonsTemplate({ isRollupButton, submitTextButton, resetTextButton })}
-`;
-
-const createDetailsSection = ({
-  showOffers = false,
-  showGallery = false
-}) => `
-  ${showOffers ? createOffersTemplate() : ''}
-  ${createDestinationSectionTemplate({ showGallery })}
-`;
-
-const createFormTemplate = ({ config = FormConfig.EDIT }) => `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
-      ${createHeaderSection(config)}
+      ${createFormHeader(config, point, destination)}
     </header>
 
     <section class="event__details">
-      ${createDetailsSection(config)}
-    </section>
-  </form>
-`;
+      ${createFormDetails(offers, destination)}
+    </section >
+  </form >
+  `;
 
 export { createFormTemplate };

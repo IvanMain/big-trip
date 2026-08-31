@@ -1,42 +1,56 @@
+import DayBuilder from '../../util/day-builder';
 import { createElement } from '../../util/render';
+import { capitalizedWord } from '../../util/word';
 
-const createEventDateTemplate = () => '<time class="event__date" datetime="2019-03-18">MAR 18</time>';
+const createEventDateTemplate = (dateFrom) => `<time class="event__date" datetime="${DayBuilder.getShortDate(dateFrom)}">${DayBuilder.getDay(dateFrom)}</time>`;
 
-const createEventTypeTemplate = () => `
+const createEventTypeTemplate = (type) => `
   <div class="event__type">
-    <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+    <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
   </div>
 `;
 
-const createEventTitleTemplate = () => '<h3 class="event__title">Taxi Amsterdam</h3>';
+const createEventTitleTemplate = (type, city) => `<h3 class="event__title">${capitalizedWord(type)} ${capitalizedWord(city)}</h3>`;
 
-const createEventScheduleTemplate = () => `
+const createEventScheduleTemplate = (dateFrom, dateTo) => `
   <div class="event__schedule">
     <p class="event__time">
-      <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+      <time class="event__start-time" datetime="${DayBuilder.get(dateFrom)}">${DayBuilder.getHoursWithMinutes(dateFrom)}</time>
       —
-      <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+      <time class="event__end-time" datetime="${DayBuilder.get(dateTo)}">${DayBuilder.getHoursWithMinutes(dateTo)}</time>
     </p>
-    <p class="event__duration">30M</p>
+    <p class="event__duration">${DayBuilder.getDuration(dateFrom, dateTo)}</p>
   </div>
 `;
 
-const createEventPriceTemplate = () => '<p class="event__price"> €&nbsp;<span class="event__price-value">20</span> </p>';
+const createEventPriceTemplate = (basePrice) => `<p class="event__price"> €&nbsp;<span class="event__price-value">${basePrice}</span> </p>`;
 
-const createEventOffersTemplate = () => `
-  <h4 class="visually-hidden">Offers:</h4>
+const createOfferItemTemplate = (offer) => {
+  const { title, price } = offer;
 
-  <ul class="event__selected-offers">
+  return `
     <li class="event__offer">
-      <span class="event__offer-title">Order Uber</span>
+      <span class="event__offer-title">${title}</span>
       +€&nbsp;
-      <span class="event__offer-price">20</span>
+      <span class="event__offer-price">${price}</span>
     </li>
-  </ul>
 `;
+};
 
-const createEventFavoriteTemplate = () => `
-  <button class="event__favorite-btn event__favorite-btn--active" type="button">
+const createEventOffersTemplate = (offers) => {
+  const { selectedOffers } = offers;
+
+  return `
+    <h4 class="visually-hidden">Offers:</h4>
+
+    <ul class="event__selected-offers">
+      ${selectedOffers.map(createOfferItemTemplate).join('')}
+    </ul>
+  `;
+};
+
+const createEventFavoriteTemplate = (isFavorite) => `
+  <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
     <span class="visually-hidden">Add to favorite</span>
     <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
       <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
@@ -50,24 +64,41 @@ const createEventRollupButtonTemplate = () => `
   </button>
 `;
 
-const createEventListItemTemplate = () => `
-  <li class="trip-events__item">
-    <div class="event">
-      ${createEventDateTemplate()}
-      ${createEventTypeTemplate()}
-      ${createEventTitleTemplate()}
-      ${createEventScheduleTemplate()}
-      ${createEventPriceTemplate()}
-      ${createEventOffersTemplate()}
-      ${createEventFavoriteTemplate()}
-      ${createEventRollupButtonTemplate()}
-    </div>
+const createEventListItemTemplate = ({ point, offers, destination }) => {
+  const { type, basePrice, isFavorite, dateFrom, dateTo } = point;
+
+  const { name: city } = destination;
+
+  return `
+    <li class="trip-events__item">
+      <div class="event">
+        ${createEventDateTemplate(dateFrom)}
+        ${createEventTypeTemplate(type)}
+        ${createEventTitleTemplate(type, city)}
+        ${createEventScheduleTemplate(dateFrom, dateTo)}
+        ${createEventPriceTemplate(basePrice)}
+        ${createEventOffersTemplate(offers)}
+        ${createEventFavoriteTemplate(isFavorite)}
+        ${createEventRollupButtonTemplate()}
+      </div>
   </li>
-`;
+  `;
+};
 
 export default class EventListItemView {
+  constructor({ point = {}, offers = {}, destination = {} }) {
+    this.point = point;
+    this.offers = offers;
+    this.destination = destination;
+
+  }
+
   getTemplate() {
-    return createEventListItemTemplate();
+    return createEventListItemTemplate({
+      point: this.point,
+      offers: this.offers,
+      destination: this.destination
+    });
   }
 
   getElement() {

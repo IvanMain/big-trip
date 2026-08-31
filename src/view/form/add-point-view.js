@@ -1,10 +1,21 @@
-import { FormConfig } from '../../constants/enum';
+import { FormConfig } from '../../configs/form-config';
 import { createElement } from '../../util/render';
-import { createFormTemplate } from './common-template/create-form-template';
+import { createFormTemplate } from '../templates/create-form-template';
 
 export default class AddPointView {
+  constructor({ point, offers, destination }) {
+    this.point = point;
+    this.offers = offers;
+    this.destination = destination;
+  }
+
   getTemplate() {
-    return createFormTemplate(FormConfig.ADD);
+    return createFormTemplate({
+      config: FormConfig.ADD,
+      point: this.point,
+      offers: this.offers,
+      destination: this.destination
+    });
   }
 
   getElement() {

@@ -4,20 +4,20 @@ import { padZero } from './common';
 
 dayjs.extend(duration);
 
-class DayBuilder {
-  get(date) {
+export default class DayBuilder {
+  static get(date) {
     return dayjs(date).format('YYYY-MM-DDTHH:mm');
   }
 
-  getShortDate(date) {
+  static getShortDate(date) {
     return dayjs(date).format('YYYY-MM-DD');
   }
 
-  getHoursWithMinutes(date) {
+  static getHoursWithMinutes(date) {
     return dayjs(date).format('HH:mm');
   }
 
-  getDuration(dateFrom, dateTo) {
+  static getDuration(dateFrom, dateTo) {
     const diff = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
     const days = padZero(diff.days());
     const hours = padZero(diff.hours());
@@ -40,13 +40,11 @@ class DayBuilder {
     return parts.join(' ');
   }
 
-  getDay(date) {
+  static getDay(date) {
     return dayjs(date).format('MMM DD');
   }
 
-  getCalendarFormat(date) {
+  static getCalendarFormat(date) {
     return dayjs(date).format('DD/MM/YY HH:mm');
   }
 }
-
-export default new DayBuilder();

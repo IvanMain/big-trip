@@ -1,4 +1,4 @@
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 
 const createPageMainTemplate = () => `
   <main class="page-body__page-main  page-main">

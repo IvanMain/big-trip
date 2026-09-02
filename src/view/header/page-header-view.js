@@ -1,4 +1,4 @@
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 
 const createLogoTemplate = () => '<img class="page-header__logo" src="img/logo.png" width="42" height="42" alt="Trip logo">';
 

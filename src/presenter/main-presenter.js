@@ -1,4 +1,4 @@
-import { render } from '../util/render';
+import { render } from '../utils/render';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
 import SortView from '../view/filters/sort-view';

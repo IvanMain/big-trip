@@ -1,4 +1,4 @@
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 
 const createWayTemplate = () => `
   <div class="trip-info__main">

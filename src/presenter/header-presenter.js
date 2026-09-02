@@ -1,4 +1,4 @@
-import { render } from '../util/render';
+import { render } from '../utils/render';
 import PageHeaderView from '../view/header/page-header-view';
 import TripInfoView from '../view/header/trip-info-view';
 import NewEventButtonView from '../view/header/new-event-button-view';

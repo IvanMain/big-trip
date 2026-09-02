@@ -1,8 +1,8 @@
-import { capitalizedWord } from '../../util/word';
-import { isEmptyObject } from '../../util/common';
+import { capitalizedWord } from '../../utils/word';
+import { isEmptyObject } from '../../utils/common';
 import { EVENT_TYPES, CITIES } from '../../constants/constants';
 import { FormConfig } from '../../configs/form-config';
-import DayBuilder from '../../util/day-builder';
+import DayBuilder from '../../utils/day-builder';
 
 const createEventTypeItemTemplate = (type, currentType) => {
   const isChecked = type === currentType ? 'checked' : '';

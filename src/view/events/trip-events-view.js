@@ -1,4 +1,4 @@
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 
 const createTripEventsTemplate = () => `
   <section class="trip-events">

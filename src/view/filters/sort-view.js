@@ -1,4 +1,4 @@
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 import { SORT_TYPES } from '../../constants/constants';
 
 const createFilterItemTemplate = (type) => `

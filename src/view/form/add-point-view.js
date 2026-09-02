@@ -1,5 +1,5 @@
 import { FormConfig } from '../../configs/form-config';
-import { createElement } from '../../util/render';
+import { createElement } from '../../utils/render';
 import { createFormTemplate } from '../templates/create-form-template';
 
 export default class AddPointView {

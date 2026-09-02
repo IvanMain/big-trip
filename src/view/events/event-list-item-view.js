@@ -1,6 +1,6 @@
-import DayBuilder from '../../util/day-builder';
-import { createElement } from '../../util/render';
-import { capitalizedWord } from '../../util/word';
+import DayBuilder from '../../utils/day-builder';
+import { createElement } from '../../utils/render';
+import { capitalizedWord } from '../../utils/word';
 
 const createEventDateTemplate = (dateFrom) => `<time class="event__date" datetime="${DayBuilder.getShortDate(dateFrom)}">${DayBuilder.getDay(dateFrom)}</time>`;
 

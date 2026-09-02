@@ -1,5 +1,5 @@
+import AbstractView from '../../framework/view/abstract-view';
 import DayBuilder from '../../utils/day-builder';
-import { createElement } from '../../utils/render';
 import { capitalizedWord } from '../../utils/word';
 
 const createEventDateTemplate = (dateFrom) => `<time class="event__date" datetime="${DayBuilder.getShortDate(dateFrom)}">${DayBuilder.getDay(dateFrom)}</time>`;
@@ -85,31 +85,19 @@ const createEventListItemTemplate = ({ point, offers, destination }) => {
   `;
 };
 
-export default class EventListItemView {
+export default class EventListItemView extends AbstractView {
   constructor({ point = {}, offers = {}, destination = {} }) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
-
   }
 
-  getTemplate() {
+  get template() {
     return createEventListItemTemplate({
       point: this.point,
       offers: this.offers,
       destination: this.destination
     });
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

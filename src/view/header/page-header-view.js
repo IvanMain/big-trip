@@ -1,4 +1,4 @@
-import { createElement } from '../../utils/render';
+import AbstractView from '../../framework/view/abstract-view';
 
 const createLogoTemplate = () => '<img class="page-header__logo" src="img/logo.png" width="42" height="42" alt="Trip logo">';
 
@@ -14,20 +14,8 @@ const createPageHeaderTemplate = () => `
   </header>
 `;
 
-export default class PageHeaderView {
-  getTemplate() {
+export default class PageHeaderView extends AbstractView {
+  get template() {
     return createPageHeaderTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

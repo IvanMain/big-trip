@@ -1,32 +1,21 @@
 import { FormConfig } from '../../configs/form-config';
-import { createElement } from '../../utils/render';
+import AbstractView from '../../framework/view/abstract-view';
 import { createFormTemplate } from '../templates/create-form-template';
 
-export default class AddPointView {
+export default class AddPointView extends AbstractView {
   constructor({ point, offers, destination }) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
   }
 
-  getTemplate() {
+  get template() {
     return createFormTemplate({
       config: FormConfig.ADD,
       point: this.point,
       offers: this.offers,
       destination: this.destination
     });
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

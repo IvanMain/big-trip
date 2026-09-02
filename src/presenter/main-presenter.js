@@ -1,4 +1,4 @@
-import { render } from '../utils/render';
+import { render } from '../framework/render';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
 import SortView from '../view/filters/sort-view';
@@ -9,10 +9,10 @@ import EventListItemView from '../view/events/event-list-item-view';
 import { FormConfig } from '../configs/form-config';
 
 export default class MainPresenter {
-  pageMainComponent = new PageMainView();
-  tripEventsComponent = new TripEventsView();
-  sortComponent = new SortView();
-  eventListComponent = new EventListView();
+  #pageMainComponent = new PageMainView();
+  #tripEventsComponent = new TripEventsView();
+  #sortComponent = new SortView();
+  #eventListComponent = new EventListView();
 
   constructor({ container, pointsModel, offersModel, destinationsModel }) {
     this.container = container;
@@ -32,19 +32,19 @@ export default class MainPresenter {
   init() {
     this.points = [...this.pointsModel.get()];
 
-    render(this.pageMainComponent, this.container);
+    render(this.#pageMainComponent, this.container);
 
-    const pageMainContainerElement = this.pageMainComponent.getElement().querySelector('.page-body__container');
+    const pageMainContainerElement = this.#pageMainComponent.element.querySelector('.page-body__container');
 
-    render(this.tripEventsComponent, pageMainContainerElement);
+    render(this.#tripEventsComponent, pageMainContainerElement);
 
-    const tripEventsElement = this.tripEventsComponent.getElement();
-    const eventList = this.eventListComponent.getElement();
+    const tripEventsElement = this.#tripEventsComponent.element;
+    const eventList = this.#eventListComponent.element;
 
-    render(this.sortComponent, tripEventsElement);
-    render(this.eventListComponent, tripEventsElement);
+    render(this.#sortComponent, tripEventsElement);
+    render(this.#eventListComponent, tripEventsElement);
 
-    render(new EditPointView(this.getPointData(this.points[1])), eventList);
+    render(new EditPointView(this.getPointData(this.points[0])), eventList);
     render(new AddPointView({
       point: FormConfig.ADD.data.point,
       offers: this.offersModel.getOffersByType(FormConfig.ADD.data.point.type),

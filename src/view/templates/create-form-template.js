@@ -189,15 +189,17 @@ const createFormTemplate = ({
   offers = {},
   destination = {}
 }) => `
-  <form class="event event--edit" action="#" method="post">
-    <header class="event__header">
-      ${createFormHeader(config, point, destination)}
-    </header>
+  <li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
+      <header class="event__header">
+        ${createFormHeader(config, point, destination)}
+      </header>
 
-    <section class="event__details">
-      ${createFormDetails(offers, destination)}
-    </section >
-  </form >
+      <section class="event__details">
+        ${createFormDetails(offers, destination)}
+      </section>
+    </form>
+  </li>
   `;
 
 export { createFormTemplate };

@@ -1,4 +1,4 @@
-import { render } from '../framework/render';
+import { render, replace } from '../framework/render';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
 import SortView from '../view/filters/sort-view';
@@ -7,12 +7,23 @@ import EditPointView from '../view/form/edit-point-view';
 import AddPointView from '../view/form/add-point-view';
 import EventListItemView from '../view/events/event-list-item-view';
 import { FormConfig } from '../configs/form-config';
+import { isEscape } from '../utils/common';
 
 export default class MainPresenter {
   #pageMainComponent = new PageMainView();
   #tripEventsComponent = new TripEventsView();
   #sortComponent = new SortView();
   #eventListComponent = new EventListView();
+
+  #eventListItemComponents = new Map();
+  #editPointComponents = new Map();
+
+  #tripEventsElement = null;
+  #eventListElement = null;
+  #pageMainContainerElement = null;
+
+  #activeEditFormId = false;
+  #isEditActiveForm = null;
 
   constructor({ container, pointsModel, offersModel, destinationsModel }) {
     this.container = container;
@@ -21,35 +32,105 @@ export default class MainPresenter {
     this.destinationsModel = destinationsModel;
   }
 
-  getPointData(point) {
-    return {
-      point,
-      offers: this.offersModel.getOffersByPoint(point),
-      destination: this.destinationsModel.getDestinationByID(point.destination)
-    };
-  }
-
   init() {
     this.points = [...this.pointsModel.get()];
 
     render(this.#pageMainComponent, this.container);
 
-    const pageMainContainerElement = this.#pageMainComponent.element.querySelector('.page-body__container');
+    this.#pageMainContainerElement = this.#pageMainComponent.element.querySelector('.page-body__container');
 
-    render(this.#tripEventsComponent, pageMainContainerElement);
+    render(this.#tripEventsComponent, this.#pageMainContainerElement);
 
-    const tripEventsElement = this.#tripEventsComponent.element;
-    const eventList = this.#eventListComponent.element;
+    this.#tripEventsElement = this.#tripEventsComponent.element;
+    this.#eventListElement = this.#eventListComponent.element;
 
-    render(this.#sortComponent, tripEventsElement);
-    render(this.#eventListComponent, tripEventsElement);
+    render(this.#sortComponent, this.#tripEventsElement);
+    render(this.#eventListComponent, this.#tripEventsElement);
 
-    render(new EditPointView(this.getPointData(this.points[0])), eventList);
-    render(new AddPointView({
+    this.points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #getPointData({ point, onEditToggle }) {
+    return {
+      point,
+      offers: this.offersModel.getOffersByPoint(point),
+      destination: this.destinationsModel.getDestinationByID(point.destination),
+      onEditToggle
+    };
+  }
+
+  #getAddPointData() {
+    return {
       point: FormConfig.ADD.data.point,
       offers: this.offersModel.getOffersByType(FormConfig.ADD.data.point.type),
-    }), eventList);
+    };
+  }
 
-    this.points.forEach((point) => render(new EventListItemView(this.getPointData(point)), eventList));
+  #getComponents(pointId) {
+    return {
+      listItem: this.#eventListItemComponents.get(pointId),
+      editForm: this.#editPointComponents.get(pointId)
+    };
+  }
+
+  #onEscKeyDown = (evt) => {
+    if (isEscape(evt.key)) {
+      this.#onEditFormSubmit(this.#activeEditFormId);
+    }
+  };
+
+  #onRollupButtonClick = (pointId) => {
+    const { listItem, editForm } = this.#getComponents(pointId);
+
+    if (listItem && editForm) {
+      this.#activeEditFormId = pointId;
+
+      document.addEventListener('keydown', this.#onEscKeyDown);
+
+      replace(editForm, listItem);
+    }
+  };
+
+  #onEditFormSubmit = (pointId) => {
+    const { listItem, editForm } = this.#getComponents(pointId);
+
+    if (listItem && editForm) {
+      this.#removeEscapeListener();
+      replace(listItem, editForm);
+    }
+  };
+
+  #removeEscapeListener = () => {
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+
+    this.#activeEditFormId = null;
+    this.#isEditActiveForm = false;
+  };
+
+  #renderPoint(point) {
+    const pointId = point.id;
+
+    const eventListItemComponent = new EventListItemView(
+      this.#getPointData({
+        point,
+        onEditToggle: () => {
+          this.#onRollupButtonClick(pointId);
+        }
+      })
+    );
+
+    const editPointComponent = new EditPointView(
+      this.#getPointData({
+        point,
+        onEditToggle: () => {
+          this.#onEditFormSubmit(pointId);
+        }
+      })
+    );
+
+    this.#eventListItemComponents.set(pointId, eventListItemComponent);
+    this.#editPointComponents.set(pointId, editPointComponent);
+    // new AddPointView(this.#getAddPointData())
+    render(eventListItemComponent, this.#eventListElement);
   }
 }

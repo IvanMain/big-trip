@@ -3,11 +3,19 @@ import AbstractView from '../../framework/view/abstract-view';
 import { createFormTemplate } from '../templates/create-form-template';
 
 export default class EditPointView extends AbstractView {
-  constructor({ point, offers, destination }) {
+  #rollupButtonElement = null;
+  #onEditToggle = null;
+
+  constructor({ point, offers, destination, onEditToggle }) {
     super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
+
+    this.#onEditToggle = onEditToggle;
+    this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+
+    this.#rollupButtonElement.addEventListener('click', this.#onFormSubmitHandler);
   }
 
   get template() {
@@ -18,4 +26,10 @@ export default class EditPointView extends AbstractView {
       destination: this.destination
     });
   }
+
+  #onFormSubmitHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#onEditToggle();
+  };
 }

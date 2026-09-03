@@ -11,7 +11,8 @@ const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
 const headerPresenter = new HeaderPresenter({
-  container: root
+  container: root,
+  pointsModel
 });
 
 const mainPresenter = new MainPresenter({

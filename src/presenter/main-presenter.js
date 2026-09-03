@@ -6,6 +6,7 @@ import EventListView from '../view/events/event-list-view';
 import EditPointView from '../view/form/edit-point-view';
 import AddPointView from '../view/form/add-point-view';
 import EventListItemView from '../view/events/event-list-item-view';
+import EmptyView from '../view/notifications/empty-view';
 import { FormConfig } from '../configs/form-config';
 import { isEscape } from '../utils/common';
 
@@ -14,6 +15,7 @@ export default class MainPresenter {
   #tripEventsComponent = new TripEventsView();
   #sortComponent = new SortView();
   #eventListComponent = new EventListView();
+  #emptyComponent = new EmptyView();
 
   #eventListItemComponents = new Map();
   #editPointComponents = new Map();
@@ -43,6 +45,11 @@ export default class MainPresenter {
 
     this.#tripEventsElement = this.#tripEventsComponent.element;
     this.#eventListElement = this.#eventListComponent.element;
+
+    if (!this.points.length) {
+      render(this.#emptyComponent, this.#tripEventsElement);
+      return;
+    }
 
     render(this.#sortComponent, this.#tripEventsElement);
     render(this.#eventListComponent, this.#tripEventsElement);

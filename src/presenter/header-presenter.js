@@ -8,19 +8,40 @@ export default class HeaderPresenter {
   #pageHeaderComponent = new PageHeaderView();
   #tripInfoComponent = new TripInfoView();
   #filtersComponent = new FiltersView();
-  #newEventButtonComponent = new NewEventButtonView();
+  #newEventButtonComponent = null;
 
-  constructor({ container }) {
+  #tripMainElement = null;
+
+  constructor({ container, pointsModel }) {
     this.container = container;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.points = [...this.pointsModel.get()];
+
     render(this.#pageHeaderComponent, this.container);
+    this.#tripMainElement = this.#pageHeaderComponent.element.querySelector('.trip-main');
 
-    const tripMainElement = this.#pageHeaderComponent.element.querySelector('.trip-main');
+    this.#renderTripInfo();
+    this.#renderFilters();
+    this.#renderNewEventButton();
+  }
 
-    render(this.#tripInfoComponent, tripMainElement);
-    render(this.#filtersComponent, tripMainElement);
-    render(this.#newEventButtonComponent, tripMainElement);
+  #renderTripInfo() {
+    if (this.points.length) {
+      render(this.#tripInfoComponent, this.#tripMainElement);
+    }
+  }
+
+  #renderFilters() {
+    render(this.#filtersComponent, this.#tripMainElement);
+  }
+
+  #renderNewEventButton() {
+    const isDisabled = !this.points.length;
+
+    this.#newEventButtonComponent = new NewEventButtonView({ isDisabled });
+    render(this.#newEventButtonComponent, this.#tripMainElement);
   }
 }

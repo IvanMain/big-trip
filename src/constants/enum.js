@@ -4,6 +4,15 @@ const Message = {
   FAILED: 'Failed to load latest route information',
 };
 
+const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
+
+const FilterType = {
+  DAY: {
+    type: 'day',
+    isDisabled: false,
+  },
+};
+
 const SortType = {
   DAY: {
     type: 'day',

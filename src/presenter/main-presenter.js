@@ -24,8 +24,7 @@ export default class MainPresenter {
   #eventListElement = null;
   #pageMainContainerElement = null;
 
-  #activeEditFormId = false;
-  #isEditActiveForm = null;
+  #activeEditFormId = null;
 
   constructor({ container, pointsModel, offersModel, destinationsModel }) {
     this.container = container;
@@ -111,7 +110,6 @@ export default class MainPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDown);
 
     this.#activeEditFormId = null;
-    this.#isEditActiveForm = false;
   };
 
   #renderPoint(point) {

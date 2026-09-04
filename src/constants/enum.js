@@ -4,13 +4,11 @@ const Message = {
   FAILED: 'Failed to load latest route information',
 };
 
-const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
-
 const FilterType = {
-  DAY: {
-    type: 'day',
-    isDisabled: false,
-  },
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
 const SortType = {
@@ -38,5 +36,6 @@ const SortType = {
 
 export {
   Message,
-  SortType
+  FilterType,
+  SortType,
 };

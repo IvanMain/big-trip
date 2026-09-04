@@ -3,11 +3,12 @@ import PageHeaderView from '../view/header/page-header-view';
 import TripInfoView from '../view/header/trip-info-view';
 import NewEventButtonView from '../view/header/new-event-button-view';
 import FiltersView from '../view/filters/filters-view';
+import FilterBuilder from '../utils/filter-builder';
 
 export default class HeaderPresenter {
   #pageHeaderComponent = new PageHeaderView();
   #tripInfoComponent = new TripInfoView();
-  #filtersComponent = new FiltersView();
+  #filtersComponent = null;
   #newEventButtonComponent = null;
 
   #tripMainElement = null;
@@ -19,6 +20,8 @@ export default class HeaderPresenter {
 
   init() {
     this.points = [...this.pointsModel.get()];
+
+    this.filtersData = new FilterBuilder(this.points).init();
 
     render(this.#pageHeaderComponent, this.container);
     this.#tripMainElement = this.#pageHeaderComponent.element.querySelector('.trip-main');
@@ -35,6 +38,7 @@ export default class HeaderPresenter {
   }
 
   #renderFilters() {
+    this.#filtersComponent = new FiltersView({ filtersData: this.filtersData });
     render(this.#filtersComponent, this.#tripMainElement);
   }
 

@@ -1,6 +1,6 @@
-import DayBuilder from '../../util/day-builder';
-import { createElement } from '../../util/render';
-import { capitalizedWord } from '../../util/word';
+import AbstractView from '../../framework/view/abstract-view';
+import DayBuilder from '../../utils/day-builder';
+import { capitalizedWord } from '../../utils/word';
 
 const createEventDateTemplate = (dateFrom) => `<time class="event__date" datetime="${DayBuilder.getShortDate(dateFrom)}">${DayBuilder.getDay(dateFrom)}</time>`;
 
@@ -85,15 +85,23 @@ const createEventListItemTemplate = ({ point, offers, destination }) => {
   `;
 };
 
-export default class EventListItemView {
-  constructor({ point = {}, offers = {}, destination = {} }) {
+export default class EventListItemView extends AbstractView {
+  #rollupButtonElement = null;
+  #onEditToggle = null;
+
+  constructor({ point = {}, offers = {}, destination = {}, onEditToggle }) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
 
+    this.#onEditToggle = onEditToggle;
+    this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+
+    this.#rollupButtonElement.addEventListener('click', this.#onRollupButtonClickHandler);
   }
 
-  getTemplate() {
+  get template() {
     return createEventListItemTemplate({
       point: this.point,
       offers: this.offers,
@@ -101,15 +109,9 @@ export default class EventListItemView {
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #onRollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+    this.#onEditToggle();
+  };
 }

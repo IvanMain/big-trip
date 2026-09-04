@@ -1,8 +1,8 @@
-import { capitalizedWord } from '../../util/word';
-import { isEmptyObject } from '../../util/common';
+import { capitalizedWord } from '../../utils/word';
+import { isEmptyObject } from '../../utils/common';
 import { EVENT_TYPES, CITIES } from '../../constants/constants';
 import { FormConfig } from '../../configs/form-config';
-import DayBuilder from '../../util/day-builder';
+import DayBuilder from '../../utils/day-builder';
 
 const createEventTypeItemTemplate = (type, currentType) => {
   const isChecked = type === currentType ? 'checked' : '';
@@ -189,15 +189,17 @@ const createFormTemplate = ({
   offers = {},
   destination = {}
 }) => `
-  <form class="event event--edit" action="#" method="post">
-    <header class="event__header">
-      ${createFormHeader(config, point, destination)}
-    </header>
+  <li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
+      <header class="event__header">
+        ${createFormHeader(config, point, destination)}
+      </header>
 
-    <section class="event__details">
-      ${createFormDetails(offers, destination)}
-    </section >
-  </form >
+      <section class="event__details">
+        ${createFormDetails(offers, destination)}
+      </section>
+    </form>
+  </li>
   `;
 
 export { createFormTemplate };

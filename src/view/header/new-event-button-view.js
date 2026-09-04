@@ -1,21 +1,19 @@
-import { createElement } from '../../util/render';
+import AbstractView from '../../framework/view/abstract-view';
 
-const createNewEventButtonTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" disabled="">New event</button>';
+const createNewEventButtonTemplate = (isDisabled = true) => `
+  <button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" ${isDisabled ? 'disabled' : ''}>New event</button>
+`;
 
-export default class NewEventButtonView {
-  getTemplate() {
-    return createNewEventButtonTemplate();
+export default class NewEventButtonView extends AbstractView {
+  #isDisabled = true;
+
+  constructor({ isDisabled }) {
+    super();
+
+    this.#isDisabled = isDisabled;
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createNewEventButtonTemplate(this.#isDisabled);
   }
 }

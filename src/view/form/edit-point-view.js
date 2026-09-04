@@ -1,15 +1,24 @@
 import { FormConfig } from '../../configs/form-config';
-import { createElement } from '../../util/render';
+import AbstractView from '../../framework/view/abstract-view';
 import { createFormTemplate } from '../templates/create-form-template';
 
-export default class EditPointView {
-  constructor({ point, offers, destination }) {
+export default class EditPointView extends AbstractView {
+  #rollupButtonElement = null;
+  #onEditToggle = null;
+
+  constructor({ point, offers, destination, onEditToggle }) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
+
+    this.#onEditToggle = onEditToggle;
+    this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+
+    this.#rollupButtonElement.addEventListener('click', this.#onFormSubmitHandler);
   }
 
-  getTemplate() {
+  get template() {
     return createFormTemplate({
       config: FormConfig.EDIT,
       point: this.point,
@@ -18,15 +27,9 @@ export default class EditPointView {
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #onFormSubmitHandler = (evt) => {
+    evt.preventDefault();
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+    this.#onEditToggle();
+  };
 }

@@ -1,20 +1,19 @@
-import { createElement } from '../../util/render';
-import { FILTER_TYPES } from '../../constants/constants';
+import AbstractView from '../../framework/view/abstract-view';
 
-const createFilterItemTemplate = (type) => `
+const createFilterItemTemplate = (type, points) => `
   <div class="trip-filters__filter">
-    <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}">
+    <input id="filter-${type}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${points.length ? '' : 'disabled'}>
     <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
   </div>
 `;
 
-const createFiltersTemplate = () => `
+const createFiltersTemplate = (filtersData) => `
   <div class="trip-main__trip-controls  trip-controls">
     <div class="trip-controls__filters">
       <h2 class="visually-hidden">Filter events</h2>
 
       <form class="trip-filters" action="#" method="get">
-        ${FILTER_TYPES.map(createFilterItemTemplate).join('')}
+        ${Object.entries(filtersData).map(([type, points]) => createFilterItemTemplate(type, points)).join('')}
 
         <button class="visually-hidden" type="submit">Accept filter</button>
       </form>
@@ -22,20 +21,14 @@ const createFiltersTemplate = () => `
   </div>
 `;
 
-export default class FiltersView {
-  getTemplate() {
-    return createFiltersTemplate();
+export default class FiltersView extends AbstractView {
+  constructor({ filtersData }) {
+    super();
+
+    this.filtersData = filtersData;
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createFiltersTemplate(this.filtersData);
   }
 }

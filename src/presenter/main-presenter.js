@@ -4,7 +4,7 @@ import TripEventsView from '../view/events/trip-events-view';
 import SortView from '../view/filters/sort-view';
 import EventListView from '../view/events/event-list-view';
 import EditPointView from '../view/form/edit-point-view';
-import AddPointView from '../view/form/add-point-view';
+// import AddPointView from '../view/form/add-point-view';
 import EventListItemView from '../view/events/event-list-item-view';
 import EmptyView from '../view/notifications/empty-view';
 import { FormConfig } from '../configs/form-config';
@@ -137,7 +137,7 @@ export default class MainPresenter {
 
     this.#eventListItemComponents.set(pointId, eventListItemComponent);
     this.#editPointComponents.set(pointId, editPointComponent);
-    // new AddPointView(this.#getAddPointData())
+    // new AddPointView(this.#getAddPointData());
     render(eventListItemComponent, this.#eventListElement);
   }
 }

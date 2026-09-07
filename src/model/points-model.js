@@ -1,8 +1,10 @@
-import { pointsMock } from '../mock/points-mock';
+import ApiService from '../service/api-service';
 
 export default class PointsModel {
+  #apiService = new ApiService();
+
   constructor() {
-    this.points = pointsMock;
+    this.points = this.#apiService.points();
   }
 
   get() {

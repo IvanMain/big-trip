@@ -1,12 +1,14 @@
-import { offersMock } from '../mock/offers-mock';
+import ApiService from '../service/api-service';
 
 export default class OffersModel {
+  #apiService = new ApiService();
+
   constructor() {
-    this.offers = offersMock;
+    this.offers = this.#apiService.offers();
   }
 
   get() {
-    return this.offers;
+    return ApiService.offers;
   }
 
   getOffersByType(type) {

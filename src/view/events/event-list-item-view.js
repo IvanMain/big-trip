@@ -90,16 +90,16 @@ export default class EventListItemView extends AbstractView {
   #favoriteButtonElement = null;
   #onEditToggle = null;
 
-  #onPointDataChange = null;
+  #onFavoriteButtonClick = null;
 
-  constructor({ point = {}, offers = {}, destination = {}, onEditToggle, onPointDataChange }) {
+  constructor({ point = {}, offers = {}, destination = {}, onEditToggle, onFavoriteButtonClick }) {
     super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
 
     this.#onEditToggle = onEditToggle;
-    this.#onPointDataChange = onPointDataChange;
+    this.#onFavoriteButtonClick = onFavoriteButtonClick;
 
     this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
     this.#favoriteButtonElement = this.element.querySelector('.event__favorite-btn');
@@ -125,9 +125,6 @@ export default class EventListItemView extends AbstractView {
   #favoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.point.isFavorite = !this.point.isFavorite;
-    this.#favoriteButtonElement.classList.toggle('event__favorite-btn--active', this.point.isFavorite);
-
-    this.#onPointDataChange(this.point);
+    this.#onFavoriteButtonClick(this.point);
   };
 }

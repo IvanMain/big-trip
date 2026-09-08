@@ -7,6 +7,9 @@ import EditPointView from '../view/form/edit-point-view';
 export default class PointPresenter {
   #activeEditFormId = null;
 
+  #prevEventListItemComponent = null;
+  #prevEditPointComponent = null;
+
   constructor({
     offersModel,
     destinationsModel,
@@ -26,6 +29,16 @@ export default class PointPresenter {
   }
 
   init(point) {
+    if (this.#prevEventListItemComponent === null && this.#prevEditPointComponent === null) {
+      this.#renderNewComponent(point);
+
+      return;
+    }
+
+    this.#rerenderComponent(point);
+  }
+
+  #createComponents(point) {
     const pointId = point.id;
 
     const eventListItemComponent = new EventListItemView(
@@ -34,7 +47,7 @@ export default class PointPresenter {
         onEditToggle: () => {
           this.#handleRollupButton(pointId);
         },
-        onPointDataChange: this.#handlePointDataChange
+        onFavoriteButtonClick: this.#handleFavoriteButtonClick
       })
     );
 
@@ -47,18 +60,44 @@ export default class PointPresenter {
       })
     );
 
-    this.eventListItemComponents.set(pointId, eventListItemComponent);
-    this.editPointComponents.set(pointId, editPointComponent);
-    render(eventListItemComponent, this.eventListElement);
+    return { eventListItemComponent, editPointComponent };
   }
 
-  #getPointData({ point, onEditToggle, onPointDataChange }) {
+  #renderNewComponent(point) {
+    const pointId = point.id;
+
+    const { eventListItemComponent, editPointComponent } = this.#createComponents(point);
+
+    this.#prevEventListItemComponent = eventListItemComponent;
+    this.#prevEditPointComponent = editPointComponent;
+
+    this.eventListItemComponents.set(pointId, this.#prevEventListItemComponent);
+    this.editPointComponents.set(pointId, this.#prevEditPointComponent);
+
+    render(this.#prevEventListItemComponent, this.eventListElement);
+  }
+
+  #rerenderComponent(point) {
+    const pointId = point.id;
+
+    const { eventListItemComponent, editPointComponent } = this.#createComponents(point);
+
+    this.eventListItemComponents.set(pointId, eventListItemComponent);
+    this.editPointComponents.set(pointId, editPointComponent);
+
+    replace(eventListItemComponent, this.#prevEventListItemComponent);
+
+    this.#prevEventListItemComponent = eventListItemComponent;
+    this.#prevEditPointComponent = editPointComponent;
+  }
+
+  #getPointData({ point, onEditToggle, onFavoriteButtonClick }) {
     return {
       point,
       offers: this.offersModel.getOffersByPoint(point),
       destination: this.destinationsModel.getDestinationByID(point.destination),
       onEditToggle,
-      onPointDataChange
+      onFavoriteButtonClick
     };
   }
 
@@ -85,8 +124,8 @@ export default class PointPresenter {
     }
   };
 
-  #handlePointDataChange = (point) => {
-    this.onPointDataChange(point);
+  #handleFavoriteButtonClick = (point) => {
+    this.onPointDataChange({ ...point, isFavorite: !point.isFavorite });
   };
 
   #handleEditForm = (pointId) => {

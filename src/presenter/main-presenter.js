@@ -83,8 +83,10 @@ export default class MainPresenter {
     // new AddPointView(this.#getAddPointData());
   }
 
-  #onPointDataChange = (point) => {
-    this.points = updateData(this.points, point);
+  #onPointDataChange = (updatedPoint) => {
+    this.points = updateData(this.points, updatedPoint);
+
+    this.#mainPresenterPoints.get(updatedPoint.id).init(updatedPoint);
   };
 
   #renderPoint = (point) => {

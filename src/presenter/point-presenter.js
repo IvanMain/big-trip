@@ -38,6 +38,19 @@ export default class PointPresenter {
     this.#rerenderComponent(point);
   }
 
+  closeForm() {
+    if (!this.#activeEditFormId) {
+      return;
+    }
+
+    const { listItem, editForm } = this.#getComponents(this.#activeEditFormId);
+
+    if (listItem && editForm) {
+      this.#removeEscapeListener();
+      replace(listItem, editForm);
+    }
+  }
+
   #createComponents(point) {
     const pointId = point.id;
 

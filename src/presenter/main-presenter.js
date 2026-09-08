@@ -42,7 +42,14 @@ export default class MainPresenter {
     this.#renderHeader();
     this.#renderFilters();
     this.#renderBody();
-    this.#renderPoints();
+
+    if (!this.points.length) {
+      this.#renderIsEmpty();
+      return;
+    }
+
+    this.#renderSort();
+    this.#renderPoints(this.points);
   }
 
   #renderHeader() {
@@ -56,12 +63,17 @@ export default class MainPresenter {
 
   #renderFilters() {
     const filtersPresenter = new FiltersPresenter({
+      points: this.points,
       container: this.container,
-      pointsModel: this.pointsModel
+      clearPoints: this.#clearPoints,
+      renderPoints: this.#renderPoints,
+      getFreshPoints: this.#getFreshPoints
     });
 
     filtersPresenter.init();
   }
+
+  #getFreshPoints = () => this.points;
 
   #renderBody() {
     render(this.#pageMainComponent, this.container);
@@ -74,30 +86,18 @@ export default class MainPresenter {
     this.#eventListElement = this.#eventListComponent.element;
   }
 
-  #renderPoints() {
-    if (!this.points.length) {
-      render(this.#emptyComponent, this.#tripEventsElement);
-      return;
-    }
+  #renderIsEmpty() {
+    render(this.#emptyComponent, this.#tripEventsElement);
+  }
 
+  #renderSort() {
     render(this.#sortComponent, this.#tripEventsElement);
+  }
+
+  #renderPoints = (points) => {
     render(this.#eventListComponent, this.#tripEventsElement);
 
-    this.points.forEach(this.#renderPoint);
-  }
-
-  #getAddPointData() {
-    return {
-      point: FormConfig.ADD.data.point,
-      offers: this.offersModel.getOffersByType(FormConfig.ADD.data.point.type),
-    };
-    // new AddPointView(this.#getAddPointData());
-  }
-
-  #onPointDataChange = (updatedPoint) => {
-    this.points = updateData(this.points, updatedPoint);
-
-    this.#mainPresenterPoints.get(updatedPoint.id).init(updatedPoint);
+    points.forEach(this.#renderPoint);
   };
 
   #renderPoint = (point) => {
@@ -114,5 +114,33 @@ export default class MainPresenter {
     this.#mainPresenterPoints.set(point.id, pointPresenter);
 
     pointPresenter.init(point);
+  };
+
+  #clearPoints = () => {
+    this.#mainPresenterPoints.forEach((presenter) => {
+      presenter.closeForm?.();
+    });
+
+    this.#eventListItemComponents.forEach(({ element }) => element.remove());
+    this.#editPointComponents.forEach(({ element }) => element.remove());
+
+    this.#eventListItemComponents.clear();
+    this.#editPointComponents.clear();
+    this.#mainPresenterPoints.clear();
+    this.#activeEditForms.clear();
+  };
+
+  #getAddPointData() {
+    return {
+      point: FormConfig.ADD.data.point,
+      offers: this.offersModel.getOffersByType(FormConfig.ADD.data.point.type),
+    };
+    // new AddPointView(this.#getAddPointData());
+  }
+
+  #onPointDataChange = (updatedPoint) => {
+    this.points = updateData(this.points, updatedPoint);
+
+    this.#mainPresenterPoints.get(updatedPoint.id).init(updatedPoint);
   };
 }

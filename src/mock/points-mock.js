@@ -2,8 +2,8 @@ const pointsMock = [
   {
     'id': 'ab20c40d-ce82-40d2-8aca-1f6221576384',
     'basePrice': 2207,
-    'dateFrom': '2026-10-12T02:14:04.366Z',
-    'dateTo': '2026-10-13T01:39:04.366Z',
+    'dateFrom': '2026-07-12T02:14:04.366Z',
+    'dateTo': '2026-08-13T01:39:04.366Z',
     'destination': '116993e2-3c31-439b-a43b-3b028eb9dc0b',
     'isFavorite': false,
     'offers': [],
@@ -93,7 +93,7 @@ const pointsMock = [
   {
     'id': 'fdc5c127-3f00-48ea-9550-4b56cbe9cb39',
     'basePrice': 5519,
-    'dateFrom': '2026-10-25T10:15:04.366Z',
+    'dateFrom': '2026-09-03T10:15:04.366Z',
     'dateTo': '2026-10-26T05:44:04.366Z',
     'destination': 'c539c201-fc76-4f2b-877a-ee44a78654a6',
     'isFavorite': false,

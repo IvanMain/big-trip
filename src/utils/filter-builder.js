@@ -6,7 +6,7 @@ dayjs.extend(duration);
 
 export default class FilterBuilder {
   constructor(points) {
-    this.points = points;
+    this.points = [...points];
   }
 
   getEverything() {
@@ -14,15 +14,15 @@ export default class FilterBuilder {
   }
 
   getFuture() {
-    return this.points.filter((point) => dayjs(point.dateFrom) > dayjs());
+    return this.points.filter((point) => dayjs().isBefore(point.dateFrom));
   }
 
   getPresent() {
-    return this.points.filter((point) => (dayjs(point.dateFrom) <= dayjs()) && (dayjs(point.dateTo) >= dayjs()));
+    return this.points.filter((point) => dayjs().isAfter(point.dateFrom) && dayjs().isBefore(point.dateTo));
   }
 
   getPast() {
-    return this.points.filter((point) => dayjs(point.dateTo) < dayjs());
+    return this.points.filter((point) => dayjs().isAfter(point.dateTo));
   }
 
   init() {

@@ -2,6 +2,7 @@ import { render } from '../framework/render';
 import { updateData } from '../utils/common';
 import { FormConfig } from '../configs/form-config';
 import HeaderPresenter from './header-presenter';
+import FiltersPresenter from './filters-presenter';
 import PointPresenter from './point-presenter';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
@@ -39,6 +40,7 @@ export default class MainPresenter {
     this.points = [...this.pointsModel.get()];
 
     this.#renderHeader();
+    this.#renderFilters();
     this.#renderBody();
     this.#renderPoints();
   }
@@ -50,6 +52,15 @@ export default class MainPresenter {
     });
 
     headerPresenter.init();
+  }
+
+  #renderFilters() {
+    const filtersPresenter = new FiltersPresenter({
+      container: this.container,
+      pointsModel: this.pointsModel
+    });
+
+    filtersPresenter.init();
   }
 
   #renderBody() {

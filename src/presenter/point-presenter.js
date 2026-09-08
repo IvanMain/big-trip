@@ -29,7 +29,7 @@ export default class PointPresenter {
   }
 
   init(point) {
-    if (this.#prevEventListItemComponent === null && this.#prevEditPointComponent === null) {
+    if (!this.#prevEventListItemComponent && !this.#prevEditPointComponent) {
       this.#renderNewComponent(point);
 
       return;

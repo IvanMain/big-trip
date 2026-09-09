@@ -3,18 +3,21 @@ import { updateData } from '../utils/common';
 import { FormConfig } from '../configs/form-config';
 import HeaderPresenter from './header-presenter';
 import FiltersPresenter from './filters-presenter';
+import SortPresenter from './sort-presenter';
 import PointPresenter from './point-presenter';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
-import SortView from '../view/filters/sort-view';
 import EventListView from '../view/events/event-list-view';
 // import AddPointView from '../view/form/add-point-view';
 import EmptyView from '../view/notifications/empty-view';
 
 export default class MainPresenter {
+  #headerPresenter = null;
+  #sortPresenter = null;
+  #filtersPresenter = null;
+
   #pageMainComponent = new PageMainView();
   #tripEventsComponent = new TripEventsView();
-  #sortComponent = new SortView();
   #eventListComponent = new EventListView();
   #emptyComponent = new EmptyView();
 
@@ -53,27 +56,26 @@ export default class MainPresenter {
   }
 
   #renderHeader() {
-    const headerPresenter = new HeaderPresenter({
+    this.#headerPresenter = new HeaderPresenter({
       container: this.container,
       pointsModel: this.pointsModel
     });
 
-    headerPresenter.init();
+    this.#headerPresenter.init();
   }
 
   #renderFilters() {
-    const filtersPresenter = new FiltersPresenter({
+    this.#filtersPresenter = new FiltersPresenter({
       points: this.points,
       container: this.container,
       clearPoints: this.#clearPoints,
       renderPoints: this.#renderPoints,
-      getFreshPoints: this.#getFreshPoints
+      resetSort: this.#resetSort,
+      getAllPoints: this.#getAllPoints,
     });
 
-    filtersPresenter.init();
+    this.#filtersPresenter.init();
   }
-
-  #getFreshPoints = () => this.points;
 
   #renderBody() {
     render(this.#pageMainComponent, this.container);
@@ -91,7 +93,16 @@ export default class MainPresenter {
   }
 
   #renderSort() {
-    render(this.#sortComponent, this.#tripEventsElement);
+    this.#sortPresenter = new SortPresenter({
+      points: this.points,
+      container: this.container,
+      clearPoints: this.#clearPoints,
+      renderPoints: this.#renderPoints,
+      getAllPoints: this.#getAllPoints,
+      getFilteredPoints: this.#getFilteredPoints,
+    });
+
+    this.#sortPresenter.init();
   }
 
   #renderPoints = (points) => {
@@ -130,6 +141,12 @@ export default class MainPresenter {
     this.#activeEditForms.clear();
   };
 
+  #resetSort = () => {
+    this.#sortPresenter.reset();
+  };
+
+  #getFilteredPoints = () => this.#filtersPresenter.getFilteredPoints();
+
   #getAddPointData() {
     return {
       point: FormConfig.ADD.data.point,
@@ -137,6 +154,8 @@ export default class MainPresenter {
     };
     // new AddPointView(this.#getAddPointData());
   }
+
+  #getAllPoints = () => this.points;
 
   #onPointDataChange = (updatedPoint) => {
     this.points = updateData(this.points, updatedPoint);

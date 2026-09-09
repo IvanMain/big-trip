@@ -17,6 +17,10 @@ export default class DayBuilder {
     return dayjs(date).format('HH:mm');
   }
 
+  static getDurationMilliseconds(dateFrom, dateTo) {
+    return dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).asMilliseconds();
+  }
+
   static getDuration(dateFrom, dateTo) {
     const diff = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
     const days = padZero(diff.days());

@@ -15,31 +15,11 @@ const FilterType = {
 };
 
 const SortType = {
-  DAY: {
-    type: 'day',
-    isChecked: true,
-    isDisabled: false,
-  },
-  EVENT: {
-    type: 'event',
-    isChecked: false,
-    isDisabled: true,
-  },
-  TIME: {
-    type: 'time',
-    isChecked: false,
-    isDisabled: false,
-  },
-  PRICE: {
-    type: 'price',
-    isChecked: false,
-    isDisabled: false,
-  },
-  OFFERS: {
-    type: 'offers',
-    isChecked: false,
-    isDisabled: true,
-  },
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
 };
 
 export {

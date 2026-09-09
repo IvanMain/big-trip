@@ -121,6 +121,25 @@ export default class PointPresenter {
     };
   }
 
+  #removeEscapeListener = () => {
+    document.removeEventListener('keydown', this.#handleEscKeyDown);
+
+    this.#activeEditFormId = null;
+  };
+
+  #hiddenActiveEditForm() {
+    if (this.activeEditForms.size > MAX_SHOW_EDIT_FORM) {
+      const entries = [...this.activeEditForms];
+
+      entries.forEach(([key, value]) => {
+        if (key !== this.#activeEditFormId) {
+          replace(value.listItem, value.editForm);
+          this.activeEditForms.delete(key);
+        }
+      });
+    }
+  }
+
   #handleRollupButton = (pointId) => {
     const { listItem, editForm } = this.#getComponents(pointId);
 
@@ -157,23 +176,4 @@ export default class PointPresenter {
       this.#handleEditForm(this.#activeEditFormId);
     }
   };
-
-  #removeEscapeListener = () => {
-    document.removeEventListener('keydown', this.#handleEscKeyDown);
-
-    this.#activeEditFormId = null;
-  };
-
-  #hiddenActiveEditForm() {
-    if (this.activeEditForms.size > MAX_SHOW_EDIT_FORM) {
-      const entries = [...this.activeEditForms];
-
-      entries.forEach(([key, value]) => {
-        if (key !== this.#activeEditFormId) {
-          replace(value.listItem, value.editForm);
-          this.activeEditForms.delete(key);
-        }
-      });
-    }
-  }
 }

@@ -28,9 +28,9 @@ export default class FilterBuilder {
   init() {
     return {
       [FilterType.EVERYTHING]: this.getEverything(),
-      [FilterType.FUTURE]: this.getFuture(this.points),
-      [FilterType.PRESENT]: this.getPresent(this.points),
-      [FilterType.PAST]: this.getPast(this.points),
+      [FilterType.FUTURE]: this.getFuture(),
+      [FilterType.PRESENT]: this.getPresent(),
+      [FilterType.PAST]: this.getPast(),
     };
   }
 }

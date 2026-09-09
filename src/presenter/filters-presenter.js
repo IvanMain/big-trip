@@ -14,14 +14,16 @@ export default class FiltersPresenter {
     container,
     clearPoints,
     renderPoints,
-    getFreshPoints
+    resetSort,
+    getAllPoints
   }) {
     this.points = points;
     this.container = container;
     this.clearPoints = clearPoints;
     this.renderPoints = renderPoints;
 
-    this.getFreshPoints = getFreshPoints;
+    this.getAllPoints = getAllPoints;
+    this.resetSort = resetSort;
   }
 
   init() {
@@ -32,6 +34,13 @@ export default class FiltersPresenter {
     this.#renderFilters(this.points);
     this.#filtersComponent.element.querySelector('.trip-filters').addEventListener('change', this.#filtersClickHandler);
   }
+
+  getFilteredPoints = () => {
+    const freshPoints = this.getAllPoints();
+    const filtersData = new FilterBuilder(freshPoints).init();
+
+    return filtersData[this.#currentFilter];
+  };
 
   #renderFilters(points) {
     this.#tripInfoElement = this.container.querySelector('.trip-info');
@@ -55,14 +64,11 @@ export default class FiltersPresenter {
         return;
       }
 
-      this.freshPoints = this.getFreshPoints();
-
-      this.#filtersData = new FilterBuilder(this.freshPoints).init();
-
+      this.resetSort();
       this.#currentFilter = targetFilter;
 
       this.clearPoints();
-      this.renderPoints(this.#filtersData[targetFilter]);
+      this.renderPoints(this.getFilteredPoints());
     }
   };
 }

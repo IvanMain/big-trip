@@ -1,8 +1,10 @@
-import { destinationsMock } from '../mock/destinations-mock';
+import ApiService from '../service/api-service';
 
 export default class DestinationsModel {
+  #apiService = new ApiService();
+
   constructor() {
-    this.destinations = destinationsMock;
+    this.destinations = this.#apiService.destinations();
   }
 
   get() {

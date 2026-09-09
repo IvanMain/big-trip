@@ -87,18 +87,25 @@ const createEventListItemTemplate = ({ point, offers, destination }) => {
 
 export default class EventListItemView extends AbstractView {
   #rollupButtonElement = null;
+  #favoriteButtonElement = null;
   #onEditToggle = null;
 
-  constructor({ point = {}, offers = {}, destination = {}, onEditToggle }) {
+  #onFavoriteButtonClick = null;
+
+  constructor({ point = {}, offers = {}, destination = {}, onEditToggle, onFavoriteButtonClick }) {
     super();
     this.point = point;
     this.offers = offers;
     this.destination = destination;
 
     this.#onEditToggle = onEditToggle;
-    this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    this.#onFavoriteButtonClick = onFavoriteButtonClick;
 
-    this.#rollupButtonElement.addEventListener('click', this.#onRollupButtonClickHandler);
+    this.#rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    this.#favoriteButtonElement = this.element.querySelector('.event__favorite-btn');
+
+    this.#rollupButtonElement.addEventListener('click', this.#rollupButtonClickHandler);
+    this.#favoriteButtonElement.addEventListener('click', this.#favoriteButtonClickHandler);
   }
 
   get template() {
@@ -109,9 +116,15 @@ export default class EventListItemView extends AbstractView {
     });
   }
 
-  #onRollupButtonClickHandler = (evt) => {
+  #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
 
     this.#onEditToggle();
+  };
+
+  #favoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#onFavoriteButtonClick(this.point);
   };
 }

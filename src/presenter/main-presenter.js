@@ -1,30 +1,36 @@
-import { render, replace } from '../framework/render';
+import { render } from '../framework/render';
+import { updateData } from '../utils/common';
+import { FormConfig } from '../configs/form-config';
+import HeaderPresenter from './header-presenter';
+import FiltersPresenter from './filters-presenter';
+import SortPresenter from './sort-presenter';
+import PointPresenter from './point-presenter';
 import PageMainView from '../view/common/page-main-view';
 import TripEventsView from '../view/events/trip-events-view';
-import SortView from '../view/filters/sort-view';
 import EventListView from '../view/events/event-list-view';
-import EditPointView from '../view/form/edit-point-view';
 // import AddPointView from '../view/form/add-point-view';
-import EventListItemView from '../view/events/event-list-item-view';
 import EmptyView from '../view/notifications/empty-view';
-import { FormConfig } from '../configs/form-config';
-import { isEscape } from '../utils/common';
 
 export default class MainPresenter {
+  #headerPresenter = null;
+  #sortPresenter = null;
+  #filtersPresenter = null;
+
   #pageMainComponent = new PageMainView();
   #tripEventsComponent = new TripEventsView();
-  #sortComponent = new SortView();
   #eventListComponent = new EventListView();
   #emptyComponent = new EmptyView();
 
   #eventListItemComponents = new Map();
   #editPointComponents = new Map();
 
+  #mainPresenterPoints = new Map();
+
   #tripEventsElement = null;
   #eventListElement = null;
   #pageMainContainerElement = null;
 
-  #activeEditFormId = null;
+  #activeEditForms = new Map();
 
   constructor({ container, pointsModel, offersModel, destinationsModel }) {
     this.container = container;
@@ -36,6 +42,42 @@ export default class MainPresenter {
   init() {
     this.points = [...this.pointsModel.get()];
 
+    this.#renderHeader();
+    this.#renderFilters();
+    this.#renderBody();
+
+    if (!this.points.length) {
+      this.#renderIsEmpty();
+      return;
+    }
+
+    this.#renderSort();
+    this.#renderPoints(this.points);
+  }
+
+  #renderHeader() {
+    this.#headerPresenter = new HeaderPresenter({
+      container: this.container,
+      pointsModel: this.pointsModel
+    });
+
+    this.#headerPresenter.init();
+  }
+
+  #renderFilters() {
+    this.#filtersPresenter = new FiltersPresenter({
+      points: this.points,
+      container: this.container,
+      clearPoints: this.#clearPoints,
+      renderPoints: this.#renderPoints,
+      resetSort: this.#resetSort,
+      getAllPoints: this.#getAllPoints,
+    });
+
+    this.#filtersPresenter.init();
+  }
+
+  #renderBody() {
     render(this.#pageMainComponent, this.container);
 
     this.#pageMainContainerElement = this.#pageMainComponent.element.querySelector('.page-body__container');
@@ -44,98 +86,80 @@ export default class MainPresenter {
 
     this.#tripEventsElement = this.#tripEventsComponent.element;
     this.#eventListElement = this.#eventListComponent.element;
+  }
 
-    if (!this.points.length) {
-      render(this.#emptyComponent, this.#tripEventsElement);
-      return;
-    }
+  #renderIsEmpty() {
+    render(this.#emptyComponent, this.#tripEventsElement);
+  }
 
-    render(this.#sortComponent, this.#tripEventsElement);
+  #renderSort() {
+    this.#sortPresenter = new SortPresenter({
+      points: this.points,
+      container: this.container,
+      clearPoints: this.#clearPoints,
+      renderPoints: this.#renderPoints,
+      getAllPoints: this.#getAllPoints,
+      getFilteredPoints: this.#getFilteredPoints,
+    });
+
+    this.#sortPresenter.init();
+  }
+
+  #renderPoints = (points) => {
     render(this.#eventListComponent, this.#tripEventsElement);
 
-    this.points.forEach((point) => this.#renderPoint(point));
-  }
+    points.forEach(this.#renderPoint);
+  };
 
-  #getPointData({ point, onEditToggle }) {
-    return {
-      point,
-      offers: this.offersModel.getOffersByPoint(point),
-      destination: this.destinationsModel.getDestinationByID(point.destination),
-      onEditToggle
-    };
-  }
+  #renderPoint = (point) => {
+    const pointPresenter = new PointPresenter({
+      offersModel: this.offersModel,
+      destinationsModel: this.destinationsModel,
+      eventListItemComponents: this.#eventListItemComponents,
+      editPointComponents: this.#editPointComponents,
+      eventListElement: this.#eventListElement,
+      onPointDataChange: this.#onPointDataChange,
+      activeEditForms: this.#activeEditForms
+    });
+
+    this.#mainPresenterPoints.set(point.id, pointPresenter);
+
+    pointPresenter.init(point);
+  };
+
+  #clearPoints = () => {
+    this.#mainPresenterPoints.forEach((presenter) => {
+      presenter.closeForm?.();
+    });
+
+    this.#eventListItemComponents.forEach(({ element }) => element.remove());
+    this.#editPointComponents.forEach(({ element }) => element.remove());
+
+    this.#eventListItemComponents.clear();
+    this.#editPointComponents.clear();
+    this.#mainPresenterPoints.clear();
+    this.#activeEditForms.clear();
+  };
+
+  #resetSort = () => {
+    this.#sortPresenter.reset();
+  };
+
+  #getFilteredPoints = () => this.#filtersPresenter.getFilteredPoints();
 
   #getAddPointData() {
     return {
       point: FormConfig.ADD.data.point,
       offers: this.offersModel.getOffersByType(FormConfig.ADD.data.point.type),
     };
-  }
-
-  #getComponents(pointId) {
-    return {
-      listItem: this.#eventListItemComponents.get(pointId),
-      editForm: this.#editPointComponents.get(pointId)
-    };
-  }
-
-  #onEscKeyDown = (evt) => {
-    if (isEscape(evt.key)) {
-      this.#onEditFormSubmit(this.#activeEditFormId);
-    }
-  };
-
-  #onRollupButtonClick = (pointId) => {
-    const { listItem, editForm } = this.#getComponents(pointId);
-
-    if (listItem && editForm) {
-      this.#activeEditFormId = pointId;
-
-      document.addEventListener('keydown', this.#onEscKeyDown);
-
-      replace(editForm, listItem);
-    }
-  };
-
-  #onEditFormSubmit = (pointId) => {
-    const { listItem, editForm } = this.#getComponents(pointId);
-
-    if (listItem && editForm) {
-      this.#removeEscapeListener();
-      replace(listItem, editForm);
-    }
-  };
-
-  #removeEscapeListener = () => {
-    document.removeEventListener('keydown', this.#onEscKeyDown);
-
-    this.#activeEditFormId = null;
-  };
-
-  #renderPoint(point) {
-    const pointId = point.id;
-
-    const eventListItemComponent = new EventListItemView(
-      this.#getPointData({
-        point,
-        onEditToggle: () => {
-          this.#onRollupButtonClick(pointId);
-        }
-      })
-    );
-
-    const editPointComponent = new EditPointView(
-      this.#getPointData({
-        point,
-        onEditToggle: () => {
-          this.#onEditFormSubmit(pointId);
-        }
-      })
-    );
-
-    this.#eventListItemComponents.set(pointId, eventListItemComponent);
-    this.#editPointComponents.set(pointId, editPointComponent);
     // new AddPointView(this.#getAddPointData());
-    render(eventListItemComponent, this.#eventListElement);
   }
+
+  #getAllPoints = () => this.points;
+
+  #onPointDataChange = (updatedPoint) => {
+    this.points = updateData(this.points, updatedPoint);
+
+    this.#mainPresenterPoints.get(updatedPoint.id).init(updatedPoint);
+  };
 }

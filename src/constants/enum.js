@@ -2,6 +2,9 @@ const Message = {
   EMPTY: 'Click New Event to create your first point',
   LOADING: 'Loading...',
   FAILED: 'Failed to load latest route information',
+  NO_FUTURE_FILTERS: 'There are no future events now',
+  NO_PRESENT_FILTERS: 'There are no present events now',
+  NO_PAST_FILTERS: 'There are no past events now',
 };
 
 const FilterType = {
@@ -12,26 +15,11 @@ const FilterType = {
 };
 
 const SortType = {
-  DAY: {
-    type: 'day',
-    isDisabled: false,
-  },
-  EVENT: {
-    type: 'event',
-    isDisabled: true,
-  },
-  TIME: {
-    type: 'time',
-    isDisabled: false,
-  },
-  PRICE: {
-    type: 'price',
-    isDisabled: false,
-  },
-  OFFERS: {
-    type: 'offers',
-    isDisabled: true,
-  },
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
 };
 
 export {

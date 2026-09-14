@@ -22,10 +22,11 @@ export default class DayBuilder {
   }
 
   static getDuration(dateFrom, dateTo) {
-    const diff = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
-    const days = padZero(diff.days());
-    const hours = padZero(diff.hours());
-    const minutes = padZero(diff.minutes());
+    const ms = dayjs(dateTo).diff(dayjs(dateFrom));
+    const totalMinutes = Math.floor(Math.abs(ms) / 1000 / 60);
+    const days = padZero(Math.floor(totalMinutes / (60 * 24)));
+    const hours = padZero(Math.floor(totalMinutes / 60) % 24);
+    const minutes = padZero(totalMinutes % 60);
 
     const parts = [];
 

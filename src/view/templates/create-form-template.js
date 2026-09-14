@@ -179,7 +179,7 @@ const createFormHeader = (config, point, destination) => {
 };
 
 const createFormDetails = (offers, destination) => `
-    ${!isEmptyObject(offers) ? createOffersTemplate(offers) : ''}
+    ${offers.allTypeOffers.length ? createOffersTemplate(offers) : ''}
     ${!isEmptyObject(destination) ? createDestinationSectionTemplate(destination) : ''}
 `;
 

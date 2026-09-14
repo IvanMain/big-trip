@@ -1,4 +1,4 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createLogoTemplate = () => '<img class="page-header__logo" src="img/logo.png" width="42" height="42" alt="Trip logo">';
 

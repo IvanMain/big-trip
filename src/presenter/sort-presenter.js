@@ -1,7 +1,7 @@
-import { SortType } from '../constants/enum';
-import { render } from '../framework/render';
-import SortBuilder from '../utils/sort-builder';
-import SortView from '../view/filters/sort-view';
+import { SortType } from '../constants/enum.js';
+import { render } from '../framework/render.js';
+import SortBuilder from '../utils/sort-builder.js';
+import SortView from '../view/filters/sort-view.js';
 
 export default class SortPresenter {
   #currentSortType = SortType.DAY;

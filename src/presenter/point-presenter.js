@@ -1,8 +1,8 @@
-import { render, replace } from '../framework/render';
-import { isEscape } from '../utils/common';
-import { MAX_SHOW_EDIT_FORM } from '../constants/constants';
-import EventListItemView from '../view/events/event-list-item-view';
-import EditPointView from '../view/form/edit-point-view';
+import { render, replace } from '../framework/render.js';
+import { isEscape } from '../utils/common.js';
+import { MAX_SHOW_EDIT_FORM } from '../constants/constants.js';
+import EventListItemView from '../view/events/event-list-item-view.js';
+import EditPointView from '../view/form/edit-point-view.js';
 
 export default class PointPresenter {
   #activeEditFormId = null;

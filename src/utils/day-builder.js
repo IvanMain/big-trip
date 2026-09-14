@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { padZero } from './common';
+import duration from 'dayjs/plugin/duration.js';
+import { padZero } from './common.js';
 
 dayjs.extend(duration);
 

@@ -1,4 +1,4 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createNewEventButtonTemplate = (isDisabled = true) => `
   <button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" ${isDisabled ? 'disabled' : ''}>New event</button>

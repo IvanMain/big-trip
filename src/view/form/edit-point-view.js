@@ -1,8 +1,8 @@
-import { FormConfig } from '../../configs/form-config';
-import AbstractView from '../../framework/view/abstract-view';
-import { createFormTemplate } from '../templates/create-form-template';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
+import { FormConfig } from '../../configs/form-config.js';
+import { createFormTemplate } from '../templates/create-form-template.js';
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
   #rollupButtonElement = null;
   #editFormElement = null;
 

@@ -1,6 +1,6 @@
-import { pointsMock } from '../mock/points-mock';
-import { offersMock } from '../mock/offers-mock';
-import { destinationsMock } from '../mock/destinations-mock';
+import { pointsMock } from '../mock/points-mock.js';
+import { offersMock } from '../mock/offers-mock.js';
+import { destinationsMock } from '../mock/destinations-mock.js';
 
 export default class ApiService {
   points() {

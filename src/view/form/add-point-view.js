@@ -1,6 +1,6 @@
-import { FormConfig } from '../../configs/form-config';
-import AbstractView from '../../framework/view/abstract-view';
-import { createFormTemplate } from '../templates/create-form-template';
+import AbstractView from '../../framework/view/abstract-view.js';
+import { FormConfig } from '../../configs/form-config.js';
+import { createFormTemplate } from '../templates/create-form-template.js';
 
 export default class AddPointView extends AbstractView {
   constructor({ point, offers, destination }) {

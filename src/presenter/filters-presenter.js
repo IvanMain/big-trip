@@ -1,7 +1,7 @@
-import { FilterType } from '../constants/enum';
-import { render, RenderPosition } from '../framework/render';
-import FilterBuilder from '../utils/filter-builder';
-import FiltersView from '../view/filters/filters-view';
+import { FilterType } from '../constants/enum.js';
+import { render, RenderPosition } from '../framework/render.js';
+import FilterBuilder from '../utils/filter-builder.js';
+import FiltersView from '../view/filters/filters-view.js';
 
 export default class FiltersPresenter {
   #currentFilter = FilterType.EVERYTHING;

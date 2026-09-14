@@ -1,6 +1,6 @@
-import AbstractView from '../../framework/view/abstract-view';
-import DayBuilder from '../../utils/day-builder';
-import { capitalizedWord } from '../../utils/word';
+import AbstractView from '../../framework/view/abstract-view.js';
+import DayBuilder from '../../utils/day-builder.js';
+import { capitalizedWord } from '../../utils/word.js';
 
 const createEventDateTemplate = (dateFrom) => `<time class="event__date" datetime="${DayBuilder.getShortDate(dateFrom)}">${DayBuilder.getDay(dateFrom)}</time>`;
 

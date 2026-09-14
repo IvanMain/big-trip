@@ -1,4 +1,4 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createSortItemTemplate = ({ type, isDisabled, isChecked }) => `
   <div class="trip-sort__item  trip-sort__item--${type}">

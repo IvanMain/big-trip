@@ -1,3 +1,6 @@
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 import { FormConfig } from '../../configs/form-config.js';
 import { createFormTemplate } from '../templates/create-form-template.js';
@@ -9,6 +12,8 @@ export default class EditPointView extends AbstractStatefulView {
   #availableOffersElement = null;
   #priceElement = null;
   #fieldDestination = null;
+  #datepickerStart = null;
+  #datepickerEnd = null;
 
   #defaultEditPointState = null;
   #onEditToggle = null;
@@ -66,6 +71,58 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.#priceElement.addEventListener('input', this.#priceInputHandler);
     this.#fieldDestination.addEventListener('change', this.#fieldDestinationChangeHandler);
+
+    this.#setDatepicker();
+  };
+
+  #setDatepicker = () => {
+    const configDatePicker = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      'time_24hr': true,
+    };
+
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        ...configDatePicker,
+        defaultDate: this._state.point.dateFrom,
+        onChange: this.#dateStartChangeHandler,
+        maxDate: this._state.point.dateTo
+      }
+    );
+
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        ...configDatePicker,
+        defaultDate: this._state.point.dateTo,
+        onChange: this.#dateEndChangeHandler,
+        minDate: this._state.point.dateFrom
+      }
+    );
+  };
+
+  #dateStartChangeHandler = ([date]) => {
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        dateFrom: date
+      }
+    });
+
+    this.#datepickerEnd.set('minDate', date);
+  };
+
+  #dateEndChangeHandler = ([date]) => {
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        dateTo: date
+      }
+    });
+
+    this.#datepickerStart.set('maxDate', date);
   };
 
   #formRollupClickHandler = (evt) => {

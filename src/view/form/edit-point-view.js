@@ -143,24 +143,32 @@ export default class EditPointView extends AbstractStatefulView {
   #typeGroupChangeHandler = (evt) => {
     const target = evt.target;
 
-    if (target.closest('.event__type-input')) {
-      const allTypeOffers = this._state.offers.allOffers.find((offer) => offer.type === target.value).offers;
-      const selectedOffers = allTypeOffers.filter((offer) => this._state.point.offers.includes(offer.id));
-
-      this.updateElement({
-        point: {
-          ...this._state.point,
-          type: target.value
-        },
-        offers: {
-          ...this._state.offers,
-          pointOffers: {
-            allTypeOffers,
-            selectedOffers
-          }
-        }
-      });
+    if (!target.closest('.event__type-input')) {
+      return;
     }
+
+    const typeOffers = this._state.offers.allOffers.find((offer) => offer.type === target.value);
+
+    if (!typeOffers) {
+      return;
+    }
+
+    const allTypeOffers = typeOffers.offers;
+    const selectedOffers = allTypeOffers.filter((offer) => this._state.point.offers.includes(offer.id));
+
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        type: target.value
+      },
+      offers: {
+        ...this._state.offers,
+        pointOffers: {
+          allTypeOffers,
+          selectedOffers
+        }
+      }
+    });
   };
 
   #availableOffersChangeHandler = (evt) => {
@@ -207,7 +215,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #priceInputHandler = (evt) => {
-    const cleanedPrice = evt.target.value.replace(/\D/g, '').replace(/^0+/, '');
+    const cleanedPrice = evt.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
 
     if (evt.target.value !== cleanedPrice) {
       evt.target.value = cleanedPrice;

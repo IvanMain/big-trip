@@ -8,7 +8,7 @@ export default class OffersModel {
   }
 
   get() {
-    return ApiService.offers;
+    return this.offers;
   }
 
   getOffersByType(type) {

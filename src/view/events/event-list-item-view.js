@@ -95,7 +95,7 @@ export default class EventListItemView extends AbstractView {
   constructor({ point = {}, offers = {}, destination = {}, onEditToggle, onFavoriteButtonClick }) {
     super();
     this.point = point;
-    this.offers = offers;
+    this.offers = offers.pointOffers;
     this.destination = destination;
 
     this.#onEditToggle = onEditToggle;

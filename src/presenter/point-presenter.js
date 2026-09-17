@@ -54,24 +54,32 @@ export default class PointPresenter {
   #createComponents(point) {
     const pointId = point.id;
 
-    const eventListItemComponent = new EventListItemView(
-      this.#getPointData({
-        point,
-        onEditToggle: () => {
-          this.#handleRollupButton(pointId);
-        },
-        onFavoriteButtonClick: this.#handleFavoriteButtonClick
-      })
-    );
+    const eventListItemComponent = new EventListItemView({
+      point,
+      offers: {
+        allOffers: this.offersModel.get(),
+        pointOffers: this.offersModel.getOffersByPoint(point),
+      },
+      destination: this.destinationsModel.getDestinationByID(point.destination),
+      onEditToggle: () => {
+        this.#handleRollupButton(pointId);
+      },
+      onFavoriteButtonClick: this.#handleFavoriteButtonClick
+    });
 
-    const editPointComponent = new EditPointView(
-      this.#getPointData({
-        point,
-        onEditToggle: () => {
-          this.#handleEditForm(pointId);
-        }
-      })
-    );
+    const editPointComponent = new EditPointView({
+      point,
+      offers: {
+        allOffers: this.offersModel.get(),
+        pointOffers: this.offersModel.getOffersByPoint(point),
+      },
+      destinations: this.destinationsModel.get(),
+      destination: this.destinationsModel.getDestinationByID(point.destination),
+      cities: this.destinationsModel.getCities(),
+      onEditToggle: () => {
+        this.#handleEditForm(pointId);
+      },
+    });
 
     return { eventListItemComponent, editPointComponent };
   }
@@ -102,16 +110,6 @@ export default class PointPresenter {
 
     this.#prevEventListItemComponent = eventListItemComponent;
     this.#prevEditPointComponent = editPointComponent;
-  }
-
-  #getPointData({ point, onEditToggle, onFavoriteButtonClick }) {
-    return {
-      point,
-      offers: this.offersModel.getOffersByPoint(point),
-      destination: this.destinationsModel.getDestinationByID(point.destination),
-      onEditToggle,
-      onFavoriteButtonClick
-    };
   }
 
   #getComponents(pointId) {

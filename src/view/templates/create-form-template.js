@@ -1,7 +1,7 @@
 import { capitalizedWord } from '../../utils/word.js';
 import { isEmptyObject } from '../../utils/common.js';
 import DayBuilder from '../../utils/day-builder.js';
-import { EVENT_TYPES, CITIES } from '../../constants/constants.js';
+import { EVENT_TYPES } from '../../constants/constants.js';
 import { FormConfig } from '../../configs/form-config.js';
 
 const createEventTypeItemTemplate = (type, currentType) => {
@@ -41,7 +41,7 @@ const createEventTypeTemplate = (point) => {
 
 const createDestinationListItemTemplate = (item) => `<option value="${item}"></option>`;
 
-const createDestinationFieldTemplate = (point, destination) => {
+const createDestinationFieldTemplate = (point, destination, cities) => {
   const { type } = point;
   const { name } = destination;
 
@@ -54,7 +54,7 @@ const createDestinationFieldTemplate = (point, destination) => {
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${capitalizedWord(name)}" list="destination-list-1">
 
       <datalist id="destination-list-1">
-        ${CITIES.map(createDestinationListItemTemplate).join('')}
+        ${cities.map(createDestinationListItemTemplate).join('')}
       </datalist>
     </div>
   `;
@@ -108,7 +108,7 @@ const createOfferItemTemplate = (type, typeOffer, selectedOffers) => {
 
   return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isChecked}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" data-offer-id="${id}" type="checkbox" name="event-offer-${type}" ${isChecked}>
 
       <label class="event__offer-label" for="event-offer-${type}-${id}">
         <span class="event__offer-title">${title}</span>
@@ -161,7 +161,7 @@ const createDestinationSectionTemplate = (destination) => {
   `;
 };
 
-const createFormHeader = (config, point, destination) => {
+const createFormHeader = (config, point, destination, cities) => {
   const {
     isRollupButton = false,
     submitTextButton = 'Save',
@@ -171,7 +171,7 @@ const createFormHeader = (config, point, destination) => {
 
   return `
     ${createEventTypeTemplate(point)}
-    ${createDestinationFieldTemplate(point, destination)}
+    ${createDestinationFieldTemplate(point, destination, cities)}
     ${createTimeFieldTemplate(point)}
     ${createPriceFieldTemplate(point)}
     ${createActionButtonsTemplate(isRollupButton, submitTextButton, resetTextButton)}
@@ -183,23 +183,23 @@ const createFormDetails = (offers, destination) => `
     ${!isEmptyObject(destination) ? createDestinationSectionTemplate(destination) : ''}
 `;
 
-const createFormTemplate = ({
-  config = FormConfig.EDIT,
-  point = {},
-  offers = {},
-  destination = {}
-}) => `
-  <li class="trip-events__item">
-    <form class="event event--edit" action="#" method="post">
-      <header class="event__header">
-        ${createFormHeader(config, point, destination)}
-      </header>
+const createFormTemplate = (config = FormConfig.EDIT, cities = [], state) => {
+  const { point, offers, destination } = state;
+  const { pointOffers } = offers;
 
-      <section class="event__details">
-        ${createFormDetails(offers, destination)}
-      </section>
-    </form>
-  </li>
-  `;
+  return `
+    <li class="trip-events__item">
+      <form class="event event--edit" action="#" method="post">
+        <header class="event__header">
+          ${createFormHeader(config, point, destination, cities)}
+        </header>
+
+        <section class="event__details">
+          ${createFormDetails(pointOffers, destination)}
+        </section>
+      </form>
+    </li>
+    `;
+};
 
 export { createFormTemplate };

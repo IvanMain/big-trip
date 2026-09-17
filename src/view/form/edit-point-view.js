@@ -72,6 +72,14 @@ export default class EditPointView extends AbstractStatefulView {
     this.#priceElement.addEventListener('input', this.#priceInputHandler);
     this.#fieldDestination.addEventListener('change', this.#fieldDestinationChangeHandler);
 
+    if (this.#datepickerStart) {
+      this.#datepickerStart.destroy();
+    }
+
+    if (this.#datepickerEnd) {
+      this.#datepickerEnd.destroy();
+    }
+
     this.#setDatepicker();
   };
 
@@ -104,7 +112,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateStartChangeHandler = ([date]) => {
-    this.updateElement({
+    this._setState({
       point: {
         ...this._state.point,
         dateFrom: date
@@ -115,7 +123,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateEndChangeHandler = ([date]) => {
-    this.updateElement({
+    this._setState({
       point: {
         ...this._state.point,
         dateTo: date
@@ -157,69 +165,62 @@ export default class EditPointView extends AbstractStatefulView {
 
   #availableOffersChangeHandler = (evt) => {
     const target = evt.target;
-    const offerId = target.dataset.offerId;
 
-    if (target.closest('.event__offer-checkbox')) {
-      const allTypeOffers = this._state.offers.allOffers.find((offer) => offer.type === this._state.point.type).offers;
-
-      if (target.checked) {
-        this._setState({
-          point: {
-            ...this._state.point,
-            offers: [
-              ...this._state.point.offers,
-              offerId,
-            ],
-          },
-          offers: {
-            ...this._state.offers,
-            pointOffers: {
-              ...this._state.offers.pointOffers,
-              selectedOffers: [...this._state.offers.pointOffers.selectedOffers, ...allTypeOffers.filter((offer) => offer.id === offerId)]
-            }
-          }
-        });
-      } else {
-        this._setState({
-          point: {
-            ...this._state.point,
-            offers: this._state.point.offers.filter((id) => id !== offerId),
-          },
-          offers: {
-            ...this._state.offers,
-            pointOffers: {
-              ...this._state.offers.pointOffers,
-              selectedOffers: [...this._state.offers.pointOffers.selectedOffers.filter((offer) => offer.id !== offerId)]
-            }
-          }
-        });
-      }
+    if (!target.closest('.event__offer-checkbox')) {
+      return;
     }
+
+    const offerId = target.dataset.offerId;
+    const allTypeOffers = this._state.offers.allOffers
+      .find((offer) => offer.type === this._state.point.type)?.offers ?? [];
+
+    const currentSelected = this._state.offers.pointOffers.selectedOffers;
+
+    let newPointOffers;
+    let newSelectedOffers;
+
+    if (target.checked) {
+      newPointOffers = [...this._state.point.offers, offerId];
+
+      const offer = allTypeOffers.find((o) => o.id === offerId);
+      newSelectedOffers = offer
+        ? [...currentSelected, offer]
+        : currentSelected;
+    } else {
+      newPointOffers = this._state.point.offers.filter((id) => id !== offerId);
+      newSelectedOffers = currentSelected.filter((offer) => offer.id !== offerId);
+    }
+
+    this._setState({
+      point: {
+        ...this._state.point,
+        offers: newPointOffers
+      },
+      offers: {
+        ...this._state.offers,
+        pointOffers: {
+          ...this._state.offers.pointOffers,
+          selectedOffers: newSelectedOffers
+        }
+      }
+    });
   };
 
   #priceInputHandler = (evt) => {
-    evt.preventDefault();
-
     const cleanedPrice = evt.target.value.replace(/\D/g, '').replace(/^0+/, '');
-    const isValidPrice = /^[1-9]\d*$/.test(cleanedPrice);
 
-    evt.target.value = cleanedPrice;
-
-    if (isValidPrice) {
-      this._setState({
-        point: {
-          ...this._state.point,
-          basePrice: Number(cleanedPrice)
-        }
-      });
-    } else {
-      this.updateElement({
-        point: {
-          ...this._state.point,
-          basePrice: 1
-        }
-      });
+    if (evt.target.value !== cleanedPrice) {
+      evt.target.value = cleanedPrice;
     }
+
+    const newBasePrice = cleanedPrice === '' ? '' : Number(cleanedPrice);
+
+    this._setState({
+      point: {
+        ...this._state.point,
+        basePrice: newBasePrice
+      }
+    });
   };
 
   #fieldDestinationChangeHandler = (evt) => {
@@ -228,7 +229,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     if (isValid) {
       const newDestination = this.destinations.find((destination) => destination.name === currentValue);
-      const newDestinationID = this.destinations.filter((destination) => destination.name === currentValue).id;
+      const newDestinationID = newDestination.id;
 
       this.updateElement({
         point: {

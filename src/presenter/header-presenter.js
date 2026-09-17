@@ -1,7 +1,7 @@
-import { render } from '../framework/render';
-import PageHeaderView from '../view/header/page-header-view';
-import TripInfoView from '../view/header/trip-info-view';
-import NewEventButtonView from '../view/header/new-event-button-view';
+import { render } from '../framework/render.js';
+import PageHeaderView from '../view/header/page-header-view.js';
+import TripInfoView from '../view/header/trip-info-view.js';
+import NewEventButtonView from '../view/header/new-event-button-view.js';
 
 export default class HeaderPresenter {
   #pageHeaderComponent = new PageHeaderView();

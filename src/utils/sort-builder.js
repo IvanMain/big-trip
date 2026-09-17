@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { SortType } from '../constants/enum';
-import DayBuilder from './day-builder';
+import duration from 'dayjs/plugin/duration.js';
+import { SortType } from '../constants/enum.js';
+import DayBuilder from './day-builder.js';
 
 dayjs.extend(duration);
 

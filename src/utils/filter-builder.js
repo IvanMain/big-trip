@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { FilterType } from '../constants/enum';
+import duration from 'dayjs/plugin/duration.js';
+import { FilterType } from '../constants/enum.js';
 
 dayjs.extend(duration);
 

@@ -1,4 +1,4 @@
-import ApiService from '../service/api-service';
+import ApiService from '../service/api-service.js';
 
 export default class PointsModel {
   #apiService = new ApiService();

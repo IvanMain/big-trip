@@ -1,15 +1,15 @@
-import { render } from '../framework/render';
-import { updateData } from '../utils/common';
-import { FormConfig } from '../configs/form-config';
-import HeaderPresenter from './header-presenter';
-import FiltersPresenter from './filters-presenter';
-import SortPresenter from './sort-presenter';
-import PointPresenter from './point-presenter';
-import PageMainView from '../view/common/page-main-view';
-import TripEventsView from '../view/events/trip-events-view';
-import EventListView from '../view/events/event-list-view';
-// import AddPointView from '../view/form/add-point-view';
-import EmptyView from '../view/notifications/empty-view';
+import { render } from '../framework/render.js';
+import { updateData } from '../utils/common.js';
+import { FormConfig } from '../configs/form-config.js';
+import HeaderPresenter from './header-presenter.js';
+import FiltersPresenter from './filters-presenter.js';
+import SortPresenter from './sort-presenter.js';
+import PointPresenter from './point-presenter.js';
+import PageMainView from '../view/common/page-main-view.js';
+import TripEventsView from '../view/events/trip-events-view.js';
+import EventListView from '../view/events/event-list-view.js';
+// import AddPointView from '../view/form/add-point-view.js';
+import EmptyView from '../view/notifications/empty-view.js';
 
 export default class MainPresenter {
   #headerPresenter = null;

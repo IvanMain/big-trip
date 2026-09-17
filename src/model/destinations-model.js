@@ -1,4 +1,4 @@
-import ApiService from '../service/api-service';
+import ApiService from '../service/api-service.js';
 
 export default class DestinationsModel {
   #apiService = new ApiService();
@@ -13,5 +13,9 @@ export default class DestinationsModel {
 
   getDestinationByID(destinationID) {
     return this.destinations.find((destination) => destination.id === destinationID) || {};
+  }
+
+  getCities() {
+    return this.destinations.map((destination) => destination.name);
   }
 }

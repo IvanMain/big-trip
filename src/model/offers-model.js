@@ -1,4 +1,4 @@
-import ApiService from '../service/api-service';
+import ApiService from '../service/api-service.js';
 
 export default class OffersModel {
   #apiService = new ApiService();
@@ -8,7 +8,7 @@ export default class OffersModel {
   }
 
   get() {
-    return ApiService.offers;
+    return this.offers;
   }
 
   getOffersByType(type) {

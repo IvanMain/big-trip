@@ -1,4 +1,4 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createPageMainTemplate = () => `
   <main class="page-body__page-main  page-main">

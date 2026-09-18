@@ -9,21 +9,10 @@ export default class FiltersPresenter {
   #filtersData = null;
   #tripInfoElement = null;
 
-  constructor({
-    points,
-    container,
-    clearPoints,
-    renderPoints,
-    resetSort,
-    getAllPoints
-  }) {
+  constructor({ points, container, onFilterChange }) {
     this.points = points;
     this.container = container;
-    this.clearPoints = clearPoints;
-    this.renderPoints = renderPoints;
-
-    this.getAllPoints = getAllPoints;
-    this.resetSort = resetSort;
+    this.onFilterChange = onFilterChange;
   }
 
   init() {
@@ -35,12 +24,10 @@ export default class FiltersPresenter {
     this.#filtersComponent.element.querySelector('.trip-filters').addEventListener('change', this.#filtersClickHandler);
   }
 
-  getFilteredPoints = () => {
-    const freshPoints = this.getAllPoints();
-    const filtersData = new FilterBuilder(freshPoints).init();
-
-    return filtersData[this.#currentFilter];
-  };
+  getFilteredPoints() {
+    const filtersData = new FilterBuilder(this.points).init();
+    return filtersData[this.#currentFilter] ?? null;
+  }
 
   #renderFilters(points) {
     this.#tripInfoElement = this.container.querySelector('.trip-info');
@@ -55,20 +42,20 @@ export default class FiltersPresenter {
   }
 
   #filtersClickHandler = (evt) => {
-    const target = evt.target;
+    const filterInput = evt.target.closest('.trip-filters__filter-input');
 
-    if (target.closest('.trip-filters__filter-input')) {
-      const targetFilter = target.value;
-
-      if (this.#currentFilter === targetFilter) {
-        return;
-      }
-
-      this.resetSort();
-      this.#currentFilter = targetFilter;
-
-      this.clearPoints();
-      this.renderPoints(this.getFilteredPoints());
+    if (!filterInput) {
+      return;
     }
+
+    const targetFilter = filterInput.value;
+
+    if (this.#currentFilter === targetFilter) {
+      return;
+    }
+
+    this.#currentFilter = targetFilter;
+    this.#filtersComponent.setChecked(targetFilter);
+    this.onFilterChange();
   };
 }

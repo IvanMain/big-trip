@@ -39,4 +39,12 @@ export default class FiltersView extends AbstractView {
       filtersData: this.filtersData
     });
   }
+
+  setChecked(type) {
+    this.element
+      .querySelectorAll('.trip-filters__filter-input')
+      .forEach((input) => {
+        input.checked = input.value === type;
+      });
+  }
 }

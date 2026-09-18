@@ -4,41 +4,34 @@ import SortBuilder from '../utils/sort-builder.js';
 import SortView from '../view/filters/sort-view.js';
 
 export default class SortPresenter {
-  #isFirstRender = true;
   #currentSortType = SortType.DAY;
   #sortComponent = null;
   #sortData = null;
   #tripEventsElement = null;
   #sortViewData = null;
 
-  constructor({
-    points,
-    container,
-    clearPoints,
-    renderPoints,
-    getAllPoints,
-    getFilteredPoints
-  }) {
+  constructor({ points, container, onSortChange }) {
     this.points = points;
     this.container = container;
-    this.clearPoints = clearPoints;
-    this.renderPoints = renderPoints;
+    this.onSortChange = onSortChange;
+  }
 
-    this.getAllPoints = getAllPoints;
-    this.getFilteredPoints = getFilteredPoints;
+  get currentSortType() {
+    return this.#currentSortType;
   }
 
   init() {
-    this.#renderSort(this.points);
-    this.reset();
-
+    this.#renderSort();
     this.#sortComponent.element.addEventListener('change', this.#sortClickHandler);
   }
 
-  reset() {
-    const targetFilter = SortType.DAY;
+  getSortedPoints(points) {
+    return new SortBuilder(points).init()[this.#currentSortType];
+  }
 
-    this.#switchSort(targetFilter);
+  reset() {
+    this.#currentSortType = SortType.DAY;
+    this.#sortComponent.setChecked(SortType.DAY);
   }
 
   #renderSort() {
@@ -60,28 +53,20 @@ export default class SortPresenter {
   }
 
   #sortClickHandler = (evt) => {
-    const target = evt.target;
+    const sortInput = evt.target.closest('.trip-sort__input');
 
-    if (target.closest('.trip-sort__input')) {
-      const targetFilter = target.dataset.type;
-
-      this.#switchSort(targetFilter);
-    }
-  };
-
-  #switchSort(targetFilter) {
-    if (!this.#isFirstRender && (this.#currentSortType === targetFilter)) {
-      this.#isFirstRender = false;
+    if (!sortInput) {
       return;
     }
 
-    this.freshPoints = this.getFilteredPoints() ?? this.getAllPoints();
+    const targetFilter = sortInput.dataset.type;
 
-    this.#sortData = new SortBuilder(this.freshPoints).init();
+    if (!targetFilter || this.#currentSortType === targetFilter) {
+      return;
+    }
+
     this.#currentSortType = targetFilter;
-
     this.#sortComponent.setChecked(targetFilter);
-    this.clearPoints();
-    this.renderPoints(this.#sortData[this.#currentSortType]);
-  }
+    this.onSortChange();
+  };
 }

@@ -4,10 +4,10 @@ import SortBuilder from '../utils/sort-builder.js';
 import SortView from '../view/filters/sort-view.js';
 
 export default class SortPresenter {
+  #isFirstRender = true;
   #currentSortType = SortType.DAY;
   #sortComponent = null;
   #sortData = null;
-  #filteredData = null;
   #tripEventsElement = null;
   #sortViewData = null;
 
@@ -30,6 +30,7 @@ export default class SortPresenter {
 
   init() {
     this.#renderSort(this.points);
+    this.reset();
 
     this.#sortComponent.element.addEventListener('change', this.#sortClickHandler);
   }
@@ -69,7 +70,8 @@ export default class SortPresenter {
   };
 
   #switchSort(targetFilter) {
-    if (this.#currentSortType === targetFilter) {
+    if (!this.#isFirstRender && (this.#currentSortType === targetFilter)) {
+      this.#isFirstRender = false;
       return;
     }
 

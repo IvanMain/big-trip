@@ -11,7 +11,7 @@ export default class SortBuilder {
   }
 
   getDay() {
-    return this.points.toSorted();
+    return this.points.toSorted((prevPoint, nextPoint) => DayBuilder.getMilliseconds(nextPoint.dateFrom) - DayBuilder.getMilliseconds(prevPoint.dateFrom));
   }
 
   getTime() {

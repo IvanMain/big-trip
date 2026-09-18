@@ -52,7 +52,6 @@ export default class MainPresenter {
     }
 
     this.#renderSort();
-    this.#renderPoints(this.points);
   }
 
   #renderHeader() {

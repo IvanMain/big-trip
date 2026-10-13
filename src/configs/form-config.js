@@ -10,14 +10,6 @@ const FormConfig = {
     isRollupButton: false,
     submitTextButton: 'Save',
     resetTextButton: 'Cancel',
-    data: {
-      point: {
-        basePrice: 0,
-        type: 'flight',
-        dateFrom: null,
-        dateTo: null
-      },
-    }
   },
 };
 

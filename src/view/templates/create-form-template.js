@@ -1,7 +1,7 @@
 import { capitalizedWord } from '../../utils/word.js';
 import { isEmptyObject } from '../../utils/common.js';
 import DayBuilder from '../../utils/day-builder.js';
-import { EVENT_TYPES } from '../../constants/constants.js';
+import { EVENT_TYPES } from '../../constants/const.js';
 import { FormConfig } from '../../configs/form-config.js';
 
 const createEventTypeItemTemplate = (type, currentType) => {

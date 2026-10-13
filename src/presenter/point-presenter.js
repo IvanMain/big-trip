@@ -1,6 +1,6 @@
 import { render, replace } from '../framework/render.js';
+import { UserAction, UpdateType } from '../constants/enum.js';
 import { isEscape } from '../utils/common.js';
-import { MAX_SHOW_EDIT_FORM } from '../constants/constants.js';
 import EventListItemView from '../view/events/event-list-item-view.js';
 import EditPointView from '../view/form/edit-point-view.js';
 
@@ -17,7 +17,7 @@ export default class PointPresenter {
     editPointComponents,
     eventListElement,
     onPointDataChange,
-    activeEditForms
+    onFormClose,
   }) {
     this.offersModel = offersModel;
     this.destinationsModel = destinationsModel;
@@ -25,13 +25,12 @@ export default class PointPresenter {
     this.editPointComponents = editPointComponents;
     this.eventListElement = eventListElement;
     this.onPointDataChange = onPointDataChange;
-    this.activeEditForms = activeEditForms;
+    this.onFormClose = onFormClose;
   }
 
   init(point) {
     if (!this.#prevEventListItemComponent && !this.#prevEditPointComponent) {
       this.#renderNewComponent(point);
-
       return;
     }
 
@@ -79,6 +78,7 @@ export default class PointPresenter {
       onEditToggle: () => {
         this.#handleEditForm(pointId);
       },
+      onDeleteClick: this.#onDeleteClick
     });
 
     return { eventListItemComponent, editPointComponent };
@@ -121,41 +121,27 @@ export default class PointPresenter {
 
   #removeEscapeListener = () => {
     document.removeEventListener('keydown', this.#handleEscKeyDown);
-
     this.#activeEditFormId = null;
   };
 
-  #hiddenActiveEditForm() {
-    if (this.activeEditForms.size > MAX_SHOW_EDIT_FORM) {
-      const entries = [...this.activeEditForms];
-
-      entries.forEach(([key, value]) => {
-        if (key !== this.#activeEditFormId) {
-          replace(value.listItem, value.editForm);
-          this.activeEditForms.delete(key);
-        }
-      });
-    }
-  }
-
   #handleRollupButton = (pointId) => {
+    this.onFormClose?.();
+
     const { listItem, editForm } = this.#getComponents(pointId);
 
     if (listItem && editForm) {
       this.#activeEditFormId = pointId;
-
       document.addEventListener('keydown', this.#handleEscKeyDown);
-
       replace(editForm, listItem);
-
-      this.activeEditForms.set(this.#activeEditFormId, { editForm, listItem });
-
-      this.#hiddenActiveEditForm();
     }
   };
 
   #handleFavoriteButtonClick = (point) => {
-    this.onPointDataChange({ ...point, isFavorite: !point.isFavorite });
+    this.onPointDataChange(
+      UserAction.UPDATE,
+      UpdateType.PATCH,
+      { ...point, isFavorite: !point.isFavorite }
+    );
   };
 
   #handleEditForm = (pointId) => {
@@ -164,8 +150,6 @@ export default class PointPresenter {
     if (listItem && editForm) {
       this.#removeEscapeListener();
       replace(listItem, editForm);
-
-      this.activeEditForms.delete(pointId);
     }
   };
 
@@ -173,5 +157,9 @@ export default class PointPresenter {
     if (isEscape(evt.key)) {
       this.#handleEditForm(this.#activeEditFormId);
     }
+  };
+
+  #onDeleteClick = (point) => {
+    this.onPointDataChange(UserAction.DELETE, UpdateType.MAJOR, point);
   };
 }

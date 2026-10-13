@@ -8,21 +8,33 @@ const createWayTemplate = () => `
   </div>
 `;
 
-const createCostTemplate = () => `
+const createCostTemplate = (totalCost) => `
   <p class="trip-info__cost">
-    Total: €&nbsp;<span class="trip-info__cost-value">1230</span>
+    Total: €&nbsp;<span class="trip-info__cost-value">${totalCost}</span>
   </p>
 `;
 
-const createTripInfoTemplate = () => `
+const createTripInfoTemplate = ({ totalCost }) => `
   <section class="trip-main__trip-info  trip-info">
     ${createWayTemplate()}
-    ${createCostTemplate()}
+    ${createCostTemplate(totalCost)}
   </section>
 `;
 
 export default class TripInfoView extends AbstractView {
+  #totalCost = 0;
+
+  constructor({ totalCost }) {
+    super();
+    this.#totalCost = totalCost;
+  }
+
   get template() {
-    return createTripInfoTemplate();
+    return createTripInfoTemplate({ totalCost: this.#totalCost });
+  }
+
+  updateData(newData) {
+    this.#totalCost = newData.totalCost;
+    this.element.querySelector('.trip-info__cost-value').textContent = this.#totalCost;
   }
 }

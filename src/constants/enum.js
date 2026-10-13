@@ -22,8 +22,15 @@ const SortType = {
   OFFERS: 'offers',
 };
 
-export {
-  Message,
-  FilterType,
-  SortType,
+const UpdateType = {
+  PATCH: 'PATCH',
+  MAJOR: 'MAJOR',
 };
+
+const UserAction = {
+  UPDATE: 'UPDATE',
+  ADD: 'ADD',
+  DELETE: 'DELETE',
+};
+
+export { Message, FilterType, SortType, UpdateType, UserAction };
